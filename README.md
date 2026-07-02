@@ -58,6 +58,7 @@ experiments/       Experiment packages with task sets and run-specific configs
 tasks/             Lightweight Git task registry entries, not full task bundles
 configs/           Deprecated top-level pointer; real configs live under experiments or contracts
 scripts/           CLI wrappers for data preparation, runs, validation, and reports
+skills/            Reusable curator-facing skills with bundled references and helper scripts
 docs/              Themed design documentation for overview, datasets, benchmark, workflow, and evaluation
 examples/          Toy task and dry-run examples
 tests/             Contract tests for the protocol skeleton
@@ -67,6 +68,11 @@ tests/             Contract tests for the protocol skeleton
 canonical shared output controls for all conditions. `contracts/skills/` is
 reserved for condition-specific templates and does not replace the shared output
 skill.
+
+`skills/` contains reusable curator-facing workflows, such as paper-derived
+reference extraction. These skills may include bundled reference docs and helper
+scripts; they are not copied into benchmark agent workspaces unless a specific
+experiment condition allows it.
 
 ## Initial Verification
 

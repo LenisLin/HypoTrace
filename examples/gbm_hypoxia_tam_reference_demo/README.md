@@ -26,6 +26,11 @@ It intentionally includes both agent-facing material and gold/reference material
 | `curation_notes.md` | Curation notes, boundary decisions, and promotion checklist. |
 | `review_notes.md` | Public-demo review boundary and file guide. |
 
+## Skill
+
+The reusable extraction workflow lives in `skills/paper-reference-extractor/`.
+Use that skill for future paper-derived reference curation; this directory is only one public full-gold example of the expected output.
+
 ## Visibility Boundary
 
 This demo exposes gold/reference material for review and demonstration.
