@@ -1,0 +1,106 @@
+{
+  "metadata": {
+    "paper_id": "GBM_HYPOXIA_TAM_2024",
+    "paper_title": "Identification of hypoxic macrophages in glioblastoma with therapeutic potential for vasculature normalization",
+    "source_pdf": "paper title: Identification of hypoxic macrophages in glioblastoma with therapeutic potential for vasculature normalization; public accessions: NGDC PRJCA008116 / OMIX002713, GEO GSE194329, OMIX003593",
+    "schema_version": "analysis_logic_chain",
+    "reference_visibility": "evaluator_only",
+    "reference_only_not_ground_truth": true,
+    "agent_visible": false
+  },
+  "reference_claims": [
+    {
+      "claim_id": "C1_SCRNA_TO_MOTAM_STATE_CLAIM",
+      "claim_text": "作者将该状态解释并命名为 Hypoxia-TAM。",
+      "required_evidence_types": [
+        "association",
+        "enrichment",
+        "preprocessing"
+      ],
+      "acceptable_alternative_claims": [],
+      "forbidden_overclaims": [
+        "QC 和 inferCNV 不能定义 TAM 状态，只能减少明显噪声和 malignant signal contamination。",
+        "聚类 resolution 和前 20 PCs 会影响 cluster 结构；cluster 不是自动等同于生物状态。",
+        "cluster-specific marker 可能包含非髓系背景或技术相关信号，需要与 myeloid-specific evidence 结合。",
+        "myeloid-specific marker 仍是差异表达结果，不代表空间定位或机制功能。",
+        "交集 signature 提高状态可追踪性，但不证明功能因果。",
+        "GSVA 是通路富集/打分证据，不应写成直接功能实验。",
+        "Hypoxia-TAM 命名是 interpretation；marker/pathway evidence 仍是关联证据。"
+      ],
+      "supporting_reference_units": [
+        "C1_S01",
+        "C1_S02",
+        "C1_S03",
+        "C1_S04",
+        "C1_S05",
+        "C1_S06",
+        "C1_S07"
+      ],
+      "evidence_summary": "一个 Mo-TAM cluster 被 marker/pathway evidence 区分为 hypoxia-associated state。",
+      "limitations": [
+        "Hypoxia-TAM 命名是 interpretation；marker/pathway evidence 仍是关联证据。"
+      ],
+      "reference_only_not_ground_truth": true
+    },
+    {
+      "claim_id": "C2_MOTAM_TO_SPATIAL_NICHE_CLAIM",
+      "claim_text": "作者将 Hypoxia-TAM 与 hGBM peri-necrotic / hypoxic niche 联系起来。",
+      "required_evidence_types": [
+        "association",
+        "preprocessing",
+        "spatial_mapping"
+      ],
+      "acceptable_alternative_claims": [],
+      "forbidden_overclaims": [
+        "预处理本身不提供 Hypoxia-TAM 空间富集结论。",
+        "QC 后保留的 35 cases 仍依赖公开数据质量和作者处理流程。",
+        "reference model 质量依赖 scRNA annotation 和 batch handling。",
+        "spot-level proportion 是模型估计值，不是直接显微计数。",
+        "histology annotation 包含人工判读，可能影响区域边界。",
+        "空间富集是 association，不是 Hypoxia-TAM 导致坏死或血管异常的因果证据。"
+      ],
+      "supporting_reference_units": [
+        "C2_S01",
+        "C2_S02",
+        "C2_S03",
+        "C2_S04",
+        "C2_S05",
+        "C2_S06"
+      ],
+      "evidence_summary": "Hypoxia-TAM 获得 peri-necrotic spatial niche association。",
+      "limitations": [
+        "空间富集是 association，不是 Hypoxia-TAM 导致坏死或血管异常的因果证据。"
+      ],
+      "reference_only_not_ground_truth": true
+    },
+    {
+      "claim_id": "C3_HYPOXIA_TAM_TO_CANDIDATE_PRIORITIZATION_CLAIM",
+      "claim_text": "作者将 ADM 作为 Hypoxia-TAM-derived factor 进入后续机制实验验证。",
+      "required_evidence_types": [
+        "association",
+        "candidate_prioritization",
+        "network_support"
+      ],
+      "acceptable_alternative_claims": [],
+      "forbidden_overclaims": [
+        "correlation with hypoxia score 仍是关联证据，不是调控因果。",
+        "STRING/DAVID/Cytoscape 是网络和功能注释证据，不是直接实验验证。",
+        "SCENIC 是计算推断，不是 TF 直接调控验证。",
+        "CellPhoneDB 是 ligand-receptor 计算推断，不是直接分泌或受体结合验证。",
+        "ADM candidate prioritization 不是因果证明；因果性来自文章后续非数据分析验证。"
+      ],
+      "supporting_reference_units": [
+        "C3_S01",
+        "C3_S02",
+        "C3_S03",
+        "C3_S04",
+        "C3_S05"
+      ],
+      "evidence_summary": "ADM 被计算优先级排序为文章后续验证的候选因子。",
+      "limitations": [
+        "ADM candidate prioritization 不是因果证明；因果性来自文章后续非数据分析验证。"
+      ],
+      "reference_only_not_ground_truth": true
+    }
+  ]
+}

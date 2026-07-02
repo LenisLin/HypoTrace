@@ -1,0 +1,32 @@
+task_id: gbm_hypoxia_tam_demo_preview
+data_access_class: nas_bundle_preview
+nas_locator:
+  bundle_root: /mnt/NAS_21T/ProjectData/HypoTrace_Data/tasks/gbm_hypoxia_tam_demo_preview
+  agent_visible_inputs: input/
+checksums:
+  manifest_sha256: sha256:replace_with_manifest_checksum
+  data_snapshot_sha256: sha256:replace_with_data_snapshot_checksum
+modality:
+  - scRNA-seq
+  - Visium
+  - histology
+organism: human
+tissue: glioblastoma
+visible_inputs:
+  - input/scrna/
+  - input/visium/
+  - input/histology/
+  - input/annotations/
+hidden_evaluator_material:
+  stored_outside_agent_workspace: false_for_this_public_demo
+  examples:
+    - reference_scientific_chain.json
+    - reference_claim_surface.json
+    - reference_execution_chain.json
+    - curation_notes.md
+    - analysis_logic_chain.jsonl
+notes: >
+  This public demo includes gold/reference files for review. A real hidden
+  benchmark task should keep these materials outside the agent workspace and
+  outside the public task registry. This manifest does not certify that the NAS
+  bundle has been prepared, checksummed, or released.

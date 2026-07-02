@@ -1,0 +1,513 @@
+{
+  "metadata": {
+    "paper_id": "GBM_HYPOXIA_TAM_2024",
+    "paper_title": "Identification of hypoxic macrophages in glioblastoma with therapeutic potential for vasculature normalization",
+    "source_pdf": "paper title: Identification of hypoxic macrophages in glioblastoma with therapeutic potential for vasculature normalization; public accessions: NGDC PRJCA008116 / OMIX002713, GEO GSE194329, OMIX003593",
+    "schema_version": "analysis_logic_chain",
+    "reference_visibility": "evaluator_only",
+    "reference_only_not_ground_truth": true,
+    "agent_visible": false
+  },
+  "reference_units": [
+    {
+      "unit_id": "C1_S01",
+      "chain_id": "C1_SCRNA_TO_MOTAM_STATE",
+      "question_or_hypothesis": "测试后续 myeloid / Mo-TAM 分析是否建立在可用且对象边界清楚的 scRNA-seq 数据上。",
+      "evidence_need": [
+        "测试后续 myeloid / Mo-TAM 分析是否建立在可用且对象边界清楚的 scRNA-seq 数据上。"
+      ],
+      "acceptable_method_families": [
+        "过滤低表达基因和异常细胞，并用 inferCNV 区分 malignant 与 non-malignant cells。"
+      ],
+      "reference_result": "得到更适合后续细胞状态建模的 scRNA-seq cell set。",
+      "reference_conclusion": "这一步不是发现 Hypoxia-TAM，而是建立后续 TAM 分析对象的质量和细胞边界。",
+      "next_question": "在对象边界清楚后，下一步需要校正样本差异并建立细胞状态结构。",
+      "uncertainties": [
+        "QC 和 inferCNV 不能定义 TAM 状态，只能减少明显噪声和 malignant signal contamination。"
+      ],
+      "source_anchors": [
+        {
+          "source_type": "article_pdf",
+          "page": 26,
+          "section": "STAR Methods",
+          "anchor_text": "inferCNV",
+          "evidence_summary": "方法描述过滤基因/细胞、线粒体比例阈值，并用 inferCNV 区分 malignant 与 non-malignant cells。"
+        }
+      ],
+      "reference_only_not_ground_truth": true
+    },
+    {
+      "unit_id": "C1_S02",
+      "chain_id": "C1_SCRNA_TO_MOTAM_STATE",
+      "question_or_hypothesis": "测试 scRNA-seq 数据中是否存在可分离的细胞 cluster / Mo-TAM cluster 结构。",
+      "evidence_need": [
+        "测试 scRNA-seq 数据中是否存在可分离的细胞 cluster / Mo-TAM cluster 结构。"
+      ],
+      "acceptable_method_families": [
+        "使用 Harmony 缓解 batch effect，基于 2,000 highly variable genes 做 PCA，用前 20 PCs 生成 UMAP，并用 Seurat FindClusters 聚类。"
+      ],
+      "reference_result": "得到后续可注释的 cell cluster / Mo-TAM cluster structure。",
+      "reference_conclusion": "聚类结构本身只是计算分组，仍需要 marker 和 pathway 证据解释其生物含义。",
+      "next_question": "下一步需要找到每个 Mo-TAM cluster 的 marker，以判断这些 cluster 代表什么状态。",
+      "uncertainties": [
+        "聚类 resolution 和前 20 PCs 会影响 cluster 结构；cluster 不是自动等同于生物状态。"
+      ],
+      "source_anchors": [
+        {
+          "source_type": "article_pdf",
+          "page": 26,
+          "section": "STAR Methods",
+          "anchor_text": "FindClusters",
+          "evidence_summary": "方法描述 Harmony、PCA、UMAP 和 FindClusters resolution 0.4。"
+        }
+      ],
+      "reference_only_not_ground_truth": true
+    },
+    {
+      "unit_id": "C1_S03",
+      "chain_id": "C1_SCRNA_TO_MOTAM_STATE",
+      "question_or_hypothesis": "测试每个 Mo-TAM cluster 是否有可区分的 marker gene program。",
+      "evidence_need": [
+        "测试每个 Mo-TAM cluster 是否有可区分的 marker gene program。"
+      ],
+      "acceptable_method_families": [
+        "使用 Seurat FindAllMarkers 识别 Mo-TAM cluster-specific alterations。"
+      ],
+      "reference_result": "得到每个 Mo-TAM cluster 的候选 marker set。",
+      "reference_conclusion": "这些 marker 说明 cluster 之间有表达差异，但还需要排除非髓系或泛细胞信号。",
+      "next_question": "下一步需要识别 myeloid-specific alterations，使 signature 更适合代表 Mo-TAM 状态。",
+      "uncertainties": [
+        "cluster-specific marker 可能包含非髓系背景或技术相关信号，需要与 myeloid-specific evidence 结合。"
+      ],
+      "source_anchors": [
+        {
+          "source_type": "article_pdf",
+          "page": 26,
+          "section": "STAR Methods",
+          "anchor_text": "cluster-specific alterations",
+          "evidence_summary": "方法说明用 FindAllMarkers 识别 Mo-TAM cluster-specific alterations 及阈值。"
+        }
+      ],
+      "reference_only_not_ground_truth": true
+    },
+    {
+      "unit_id": "C1_S04",
+      "chain_id": "C1_SCRNA_TO_MOTAM_STATE",
+      "question_or_hypothesis": "测试哪些表达特征能代表 myeloid / Mo-TAM identity，而不是只代表某个 cluster 内差异。",
+      "evidence_need": [
+        "测试哪些表达特征能代表 myeloid / Mo-TAM identity，而不是只代表某个 cluster 内差异。"
+      ],
+      "acceptable_method_families": [
+        "使用 FindAllMarkers 识别 myeloid-specific alterations，即 myeloid cells 相对其他 cell types 上调的 genes。"
+      ],
+      "reference_result": "得到可用于限制 Mo-TAM signature 的 myeloid-specific marker evidence。",
+      "reference_conclusion": "这些特征帮助将 Mo-TAM 状态与整体 myeloid identity 联系起来。",
+      "next_question": "下一步可以将 cluster-specific 与 myeloid-specific evidence 取交集构建 core signature。",
+      "uncertainties": [
+        "myeloid-specific marker 仍是差异表达结果，不代表空间定位或机制功能。"
+      ],
+      "source_anchors": [
+        {
+          "source_type": "article_pdf",
+          "page": 26,
+          "section": "STAR Methods",
+          "anchor_text": "myeloid-specific alterations",
+          "evidence_summary": "方法说明 myeloid-specific alterations 的 FindAllMarkers 阈值。"
+        }
+      ],
+      "reference_only_not_ground_truth": true
+    },
+    {
+      "unit_id": "C1_S05",
+      "chain_id": "C1_SCRNA_TO_MOTAM_STATE",
+      "question_or_hypothesis": "测试哪些 genes 同时代表 Mo-TAM cluster specificity 和 myeloid relevance。",
+      "evidence_need": [
+        "测试哪些 genes 同时代表 Mo-TAM cluster specificity 和 myeloid relevance。"
+      ],
+      "acceptable_method_families": [
+        "将 cluster-specific alterations 与 myeloid-specific alterations 取交集，构建每个 Mo-TAM cluster 的 core signature。"
+      ],
+      "reference_result": "得到可作为 reference 的 Mo-TAM cluster core signatures。",
+      "reference_conclusion": "这些 signature 将 UMAP cluster 转化为可追踪的状态定义。",
+      "next_question": "下一步需要用 pathway analysis 解释这些 Mo-TAM states 的功能差异。",
+      "uncertainties": [
+        "交集 signature 提高状态可追踪性，但不证明功能因果。"
+      ],
+      "source_anchors": [
+        {
+          "source_type": "article_pdf",
+          "page": 26,
+          "section": "STAR Methods",
+          "anchor_text": "core gene signature",
+          "evidence_summary": "方法说明 core gene signature 由两类 alterations 交集提取。"
+        }
+      ],
+      "reference_only_not_ground_truth": true
+    },
+    {
+      "unit_id": "C1_S06",
+      "chain_id": "C1_SCRNA_TO_MOTAM_STATE",
+      "question_or_hypothesis": "测试 Mo-TAM clusters 是否具有不同的 pathway programs。",
+      "evidence_need": [
+        "测试 Mo-TAM clusters 是否具有不同的 pathway programs。"
+      ],
+      "acceptable_method_families": [
+        "使用 MSigDB C2/C5 gene sets 和 GSVA，对 single-cell count matrix 计算 z-score，并用 FindAllMarkers 识别 cluster core pathways。"
+      ],
+      "reference_result": "得到 Mo-TAM cluster-level pathway programs。",
+      "reference_conclusion": "pathway programs 为后续 Hypoxia-TAM 解释提供功能证据。",
+      "next_question": "下一步可以结合 marker 和 pathway evidence 判断是否存在 hypoxia-associated Mo-TAM state。",
+      "uncertainties": [
+        "GSVA 是通路富集/打分证据，不应写成直接功能实验。"
+      ],
+      "source_anchors": [
+        {
+          "source_type": "article_pdf",
+          "page": 26,
+          "section": "STAR Methods",
+          "anchor_text": "GSVA",
+          "evidence_summary": "方法说明 MSigDB C2/C5、GSVA 参数和 core pathway 识别阈值。"
+        }
+      ],
+      "reference_only_not_ground_truth": true
+    },
+    {
+      "unit_id": "C1_S07",
+      "chain_id": "C1_SCRNA_TO_MOTAM_STATE",
+      "question_or_hypothesis": "测试是否存在一个可被 marker/pathway evidence 支持的 hypoxia-associated Mo-TAM state。",
+      "evidence_need": [
+        "测试是否存在一个可被 marker/pathway evidence 支持的 hypoxia-associated Mo-TAM state。"
+      ],
+      "acceptable_method_families": [
+        "用 marker 和 pathway evidence 解释 Mo-TAM clusters，重点关注 hypoxia response、glycolysis 和 proangiogenic features。"
+      ],
+      "reference_result": "一个 Mo-TAM cluster 被 marker/pathway evidence 区分为 hypoxia-associated state。",
+      "reference_conclusion": "作者将该状态解释并命名为 Hypoxia-TAM。",
+      "next_question": "下一步需要把 Hypoxia-TAM 映射回组织空间，测试它是否位于 peri-necrotic / hypoxic niche。",
+      "uncertainties": [
+        "Hypoxia-TAM 命名是 interpretation；marker/pathway evidence 仍是关联证据。"
+      ],
+      "source_anchors": [
+        {
+          "source_type": "article_pdf",
+          "page": 5,
+          "section": "Results",
+          "anchor_text": "ADM, BNIP3, and CSTB",
+          "evidence_summary": "结果描述 Hypoxia-TAM cluster 上调 hypoxia response genes 并具有 glycolysis / proangiogenic features。"
+        }
+      ],
+      "reference_only_not_ground_truth": true
+    },
+    {
+      "unit_id": "C2_S01",
+      "chain_id": "C2_MOTAM_TO_SPATIAL_NICHE",
+      "question_or_hypothesis": "测试公共 hGBM Visium 数据是否能被整理为空间表达矩阵和图像对齐对象。",
+      "evidence_need": [
+        "测试公共 hGBM Visium 数据是否能被整理为空间表达矩阵和图像对齐对象。"
+      ],
+      "acceptable_method_families": [
+        "使用 SpaceRanger 将 reads 比对到 GRCh38-2020-A，生成每个样本的 mRNA count matrix，并将 Visium spot positions 与 paired histology images 对齐。"
+      ],
+      "reference_result": "得到后续 Seurat/Cell2location 可使用的空间表达矩阵和 spot-image alignment。",
+      "reference_conclusion": "空间表达矩阵和 H&E 对齐让 scRNA 状态具备组织定位分析入口。",
+      "next_question": "下一步需要对 spot 质量和 normalization 做处理，确保空间映射不受低质量 spots 影响。",
+      "uncertainties": [
+        "预处理本身不提供 Hypoxia-TAM 空间富集结论。"
+      ],
+      "source_anchors": [
+        {
+          "source_type": "article_pdf",
+          "page": 27,
+          "section": "STAR Methods",
+          "anchor_text": "SpaceRanger",
+          "evidence_summary": "方法说明 public Visium 数据、SpaceRanger 比对、count matrix 生成和 H&E alignment。"
+        }
+      ],
+      "reference_only_not_ground_truth": true
+    },
+    {
+      "unit_id": "C2_S02",
+      "chain_id": "C2_MOTAM_TO_SPATIAL_NICHE",
+      "question_or_hypothesis": "测试哪些 hGBM spatial samples 和 spots 可用于后续空间映射。",
+      "evidence_need": [
+        "测试哪些 hGBM spatial samples 和 spots 可用于后续空间映射。"
+      ],
+      "acceptable_method_families": [
+        "使用 Seurat 处理 SpaceRanger outputs；过滤 counts、genes 和 mitochondrial percentage 异常 spots；用 SCTransform normalization/scaling/regression；排除两个图像质量差的 samples。"
+      ],
+      "reference_result": "得到 QC 后的 hGBM spatial transcriptomic dataset。",
+      "reference_conclusion": "这一步建立可用于 spatial mapping 的质量控制边界。",
+      "next_question": "下一步可以用 scRNA-derived Mo-TAM signatures 建立 Cell2location reference。",
+      "uncertainties": [
+        "QC 后保留的 35 cases 仍依赖公开数据质量和作者处理流程。"
+      ],
+      "source_anchors": [
+        {
+          "source_type": "article_pdf",
+          "page": 27,
+          "section": "STAR Methods",
+          "anchor_text": "SCTransform",
+          "evidence_summary": "方法列出 Visium spot 过滤阈值、SCTransform 回归变量、排除样本和最终 35 cases。"
+        }
+      ],
+      "reference_only_not_ground_truth": true
+    },
+    {
+      "unit_id": "C2_S03",
+      "chain_id": "C2_MOTAM_TO_SPATIAL_NICHE",
+      "question_or_hypothesis": "测试 scRNA-defined Mo-TAM states 是否能作为 spatial decomposition 的 reference。",
+      "evidence_need": [
+        "测试 scRNA-defined Mo-TAM states 是否能作为 spatial decomposition 的 reference。"
+      ],
+      "acceptable_method_families": [
+        "用 hGBM scRNA-seq 中已注释 Mo-TAM clusters 估计 reference signature；donor ID 作为 batch category，训练 Cell2location model。"
+      ],
+      "reference_result": "得到用于 spatial decomposition 的 Mo-TAM reference signature model。",
+      "reference_conclusion": "scRNA 定义的 Mo-TAM states 被转换为空间映射模型的 reference。",
+      "next_question": "下一步用 reference model 分解每个 spatial spot 的 Mo-TAM cluster proportion。",
+      "uncertainties": [
+        "reference model 质量依赖 scRNA annotation 和 batch handling。"
+      ],
+      "source_anchors": [
+        {
+          "source_type": "article_pdf",
+          "page": 27,
+          "section": "STAR Methods",
+          "anchor_text": "reference signature",
+          "evidence_summary": "方法说明 Cell2location reference signature、negative binomial model 和训练参数。"
+        }
+      ],
+      "reference_only_not_ground_truth": true
+    },
+    {
+      "unit_id": "C2_S04",
+      "chain_id": "C2_MOTAM_TO_SPATIAL_NICHE",
+      "question_or_hypothesis": "测试 scRNA-defined Mo-TAM states 能否被投射到 spatial spots。",
+      "evidence_need": [
+        "测试 scRNA-defined Mo-TAM states 能否被投射到 spatial spots。"
+      ],
+      "acceptable_method_families": [
+        "用 Cell2location reference signature model 分解 spatial transcriptomic mRNA counts，并估计每个 spot 中各 Mo-TAM cluster proportion。"
+      ],
+      "reference_result": "得到 spot-level Mo-TAM composition estimates。",
+      "reference_conclusion": "Mo-TAM states 从 scRNA clusters 变成组织空间中的 spot-level abundance estimates。",
+      "next_question": "下一步需要把 spot-level composition 与 histology regions 对齐，判断空间生态位。",
+      "uncertainties": [
+        "spot-level proportion 是模型估计值，不是直接显微计数。"
+      ],
+      "source_anchors": [
+        {
+          "source_type": "article_pdf",
+          "page": 27,
+          "section": "STAR Methods",
+          "anchor_text": "decompose mRNA counts",
+          "evidence_summary": "方法说明 Cell2location 分解 spatial mRNA counts 并估计每个 spot 的 Mo-TAM cluster proportion。"
+        }
+      ],
+      "reference_only_not_ground_truth": true
+    },
+    {
+      "unit_id": "C2_S05",
+      "chain_id": "C2_MOTAM_TO_SPATIAL_NICHE",
+      "question_or_hypothesis": "测试每个 spatial spot 是否能获得可比较的 histology region label。",
+      "evidence_need": [
+        "测试每个 spatial spot 是否能获得可比较的 histology region label。"
+      ],
+      "acceptable_method_families": [
+        "使用 Ivy hGBM 四类 histology regions，由 neuropathologists 在 H&E 上标注，并用 QuPath 导出 GeoJSON 后映射到 spatial spots。"
+      ],
+      "reference_result": "得到带有 histology region labels 的 spatial spots。",
+      "reference_conclusion": "组织学区域标签使 Mo-TAM spatial composition 可以按 niche 进行比较。",
+      "next_question": "下一步可以计算每个 region 中 Mo-TAM cluster proportion 的均值并比较富集。",
+      "uncertainties": [
+        "histology annotation 包含人工判读，可能影响区域边界。"
+      ],
+      "source_anchors": [
+        {
+          "source_type": "article_pdf",
+          "page": 27,
+          "section": "STAR Methods",
+          "anchor_text": "GeoJSON",
+          "evidence_summary": "方法说明 Ivy hGBM 四类 histology regions、neuropathologist annotation、QuPath 和 GeoJSON mapping。"
+        }
+      ],
+      "reference_only_not_ground_truth": true
+    },
+    {
+      "unit_id": "C2_S06",
+      "chain_id": "C2_MOTAM_TO_SPATIAL_NICHE",
+      "question_or_hypothesis": "测试 Hypoxia-TAM 是否在 peri-necrotic region 中富集。",
+      "evidence_need": [
+        "测试 Hypoxia-TAM 是否在 peri-necrotic region 中富集。"
+      ],
+      "acceptable_method_families": [
+        "计算每个 histology region 内各 Mo-TAM cluster 的 Cell2location-computed proportion mean score，并用 ComplexHeatmap 展示 histology-transcriptome assignments。"
+      ],
+      "reference_result": "Hypoxia-TAM 获得 peri-necrotic spatial niche association。",
+      "reference_conclusion": "作者将 Hypoxia-TAM 与 hGBM peri-necrotic / hypoxic niche 联系起来。",
+      "next_question": "下一步可以问：这个 niche-associated Hypoxia-TAM 是否有与 hypoxia 和 vascular remodeling 相关的候选基因或通讯因子。",
+      "uncertainties": [
+        "空间富集是 association，不是 Hypoxia-TAM 导致坏死或血管异常的因果证据。"
+      ],
+      "source_anchors": [
+        {
+          "source_type": "article_pdf",
+          "page": 27,
+          "section": "STAR Methods",
+          "anchor_text": "mean score",
+          "evidence_summary": "方法说明按 histological regions 计算每个 Mo-TAM cluster 的 Cell2location proportion mean score。"
+        },
+        {
+          "source_type": "article_pdf",
+          "page": 5,
+          "section": "Results",
+          "anchor_text": "preferentially localized",
+          "evidence_summary": "结果报告 Hypoxia-TAM preferentially localized in the peri-necrotic region。"
+        }
+      ],
+      "reference_only_not_ground_truth": true
+    },
+    {
+      "unit_id": "C3_S01",
+      "chain_id": "C3_HYPOXIA_TAM_TO_CANDIDATE_PRIORITIZATION",
+      "question_or_hypothesis": "测试哪些 genes 同时与 Hypoxia-TAM upregulation 和 hypoxia score 相关。",
+      "evidence_need": [
+        "测试哪些 genes 同时与 Hypoxia-TAM upregulation 和 hypoxia score 相关。"
+      ],
+      "acceptable_method_families": [
+        "定义 core HRGs，计算每个 Hypoxia-TAM cell 的 hypoxia score，用 Pearson correlation 找 top positive/negative correlated genes，并与 Hypoxia-TAM DEGs overlap 得到 HPGs/HNGs。"
+      ],
+      "reference_result": "得到 Hypoxia-TAM hypoxia-associated gene candidates。",
+      "reference_conclusion": "这些 genes 被解释为 Hypoxia-TAM hypoxia-associated programs 的候选组成部分。",
+      "next_question": "下一步需要把这些候选 genes 组织成 interaction / functional network。",
+      "uncertainties": [
+        "correlation with hypoxia score 仍是关联证据，不是调控因果。"
+      ],
+      "source_anchors": [
+        {
+          "source_type": "article_pdf",
+          "page": 26,
+          "section": "STAR Methods",
+          "anchor_text": "Hypoxia-associated gene interaction network",
+          "evidence_summary": "方法说明 HRGs、AddModuleScore、Pearson correlation、top genes 和 HPG/HNG overlap。"
+        }
+      ],
+      "reference_only_not_ground_truth": true
+    },
+    {
+      "unit_id": "C3_S02",
+      "chain_id": "C3_HYPOXIA_TAM_TO_CANDIDATE_PRIORITIZATION",
+      "question_or_hypothesis": "测试 hypoxia-associated genes 是否形成可解释的 functional interaction network。",
+      "evidence_need": [
+        "测试 hypoxia-associated genes 是否形成可解释的 functional interaction network。"
+      ],
+      "acceptable_method_families": [
+        "使用 STRING 预测 core HRGs 与 HPGs/HNGs 的 interactions，用 DAVID 做 clustering / functional annotation，并用 Cytoscape 可视化。"
+      ],
+      "reference_result": "得到 Hypoxia-TAM hypoxia-associated gene interaction network。",
+      "reference_conclusion": "网络注释帮助解释 Hypoxia-TAM 与 hypoxia adaptation、niche remodeling 等功能程序的关系。",
+      "next_question": "下一步可以进一步推断调控这些 Hypoxia-TAM programs 的 TF/regulon。",
+      "uncertainties": [
+        "STRING/DAVID/Cytoscape 是网络和功能注释证据，不是直接实验验证。"
+      ],
+      "source_anchors": [
+        {
+          "source_type": "article_pdf",
+          "page": 26,
+          "section": "STAR Methods",
+          "anchor_text": "STRING database",
+          "evidence_summary": "方法说明 STRING interaction、DAVID clustering/function annotation 和 Cytoscape visualization。"
+        }
+      ],
+      "reference_only_not_ground_truth": true
+    },
+    {
+      "unit_id": "C3_S03",
+      "chain_id": "C3_HYPOXIA_TAM_TO_CANDIDATE_PRIORITIZATION",
+      "question_or_hypothesis": "测试 Mo-TAM clusters 是否具有不同 TF regulon activity，哪些 TF 可能关联 Hypoxia-TAM signature。",
+      "evidence_need": [
+        "测试 Mo-TAM clusters 是否具有不同 TF regulon activity，哪些 TF 可能关联 Hypoxia-TAM signature。"
+      ],
+      "acceptable_method_families": [
+        "从 hGBM-IDHwt-7 和 hGBM-IDHwt-17 抽取 1,000 Mo-TAMs，用 GENIE3、RcisTarget 和 AUCell 执行 SCENIC regulon analysis。"
+      ],
+      "reference_result": "得到 Mo-TAM regulon activity landscape。",
+      "reference_conclusion": "SCENIC 结果用于优先考虑 Hypoxia-TAM signature 相关 TF programs。",
+      "next_question": "下一步可以结合 cell-cell interaction 或 secreted factor screening 寻找 Hypoxia-TAM 影响其他细胞的候选通讯因子。",
+      "uncertainties": [
+        "SCENIC 是计算推断，不是 TF 直接调控验证。"
+      ],
+      "source_anchors": [
+        {
+          "source_type": "article_pdf",
+          "page": 26,
+          "section": "STAR Methods",
+          "anchor_text": "SCENIC algorithm",
+          "evidence_summary": "方法说明 GENIE3、RcisTarget、AUCell 和 282 regulons。"
+        },
+        {
+          "source_type": "article_pdf",
+          "page": 8,
+          "section": "Results",
+          "anchor_text": "SCENIC",
+          "evidence_summary": "结果提到用 SCENIC 筛选 potential TFs regulating Hypoxia-TAM signature。"
+        }
+      ],
+      "reference_only_not_ground_truth": true
+    },
+    {
+      "unit_id": "C3_S04",
+      "chain_id": "C3_HYPOXIA_TAM_TO_CANDIDATE_PRIORITIZATION",
+      "question_or_hypothesis": "测试 Hypoxia-TAM / Mo-TAM clusters 是否具有与 ECs 的候选 ligand-receptor communication。",
+      "evidence_need": [
+        "测试 Hypoxia-TAM / Mo-TAM clusters 是否具有与 ECs 的候选 ligand-receptor communication。"
+      ],
+      "acceptable_method_families": [
+        "使用 CellPhoneDB 分析 ECs 与 Mo-TAM clusters 之间的 intercellular interactions，计算 ligand/receptor average expression 和 cell specificity likelihood。"
+      ],
+      "reference_result": "得到 EC-Mo-TAM candidate communication map。",
+      "reference_conclusion": "CellPhoneDB 为从 Hypoxia-TAM 状态转向 endothelial-related candidate mediators 提供计算候选。",
+      "next_question": "下一步可与 secreted protein / hypoxia response / Hypoxia-TAM signature 交集筛选结合，优先级排序具体候选因子。",
+      "uncertainties": [
+        "CellPhoneDB 是 ligand-receptor 计算推断，不是直接分泌或受体结合验证。"
+      ],
+      "source_anchors": [
+        {
+          "source_type": "article_pdf",
+          "page": 26,
+          "section": "STAR Methods",
+          "anchor_text": "CellPhoneDB",
+          "evidence_summary": "方法说明 ECs 与 Mo-TAM clusters 的 CellPhoneDB ligand-receptor interaction analysis。"
+        }
+      ],
+      "reference_only_not_ground_truth": true
+    },
+    {
+      "unit_id": "C3_S05",
+      "chain_id": "C3_HYPOXIA_TAM_TO_CANDIDATE_PRIORITIZATION",
+      "question_or_hypothesis": "测试是否存在一个由 Hypoxia-TAM 表达、具备分泌属性、且与 hypoxia response 相连的优先候选。",
+      "evidence_need": [
+        "测试是否存在一个由 Hypoxia-TAM 表达、具备分泌属性、且与 hypoxia response 相连的优先候选。"
+      ],
+      "acceptable_method_families": [
+        "交叉筛选 Hypoxia-TAM signature genes、human genes encoding secreted proteins 和 hypoxia response gene set。"
+      ],
+      "reference_result": "ADM 被计算优先级排序为文章后续验证的候选因子。",
+      "reference_conclusion": "作者将 ADM 作为 Hypoxia-TAM-derived factor 进入后续机制实验验证。",
+      "next_question": "后续验证可以作为文章整体逻辑上下文记录，但不属于 Agent 可执行的数据分析方法路径。",
+      "uncertainties": [
+        "ADM candidate prioritization 不是因果证明；因果性来自文章后续非数据分析验证。"
+      ],
+      "source_anchors": [
+        {
+          "source_type": "article_pdf",
+          "page": 8,
+          "section": "Results",
+          "anchor_text": "ADM as the only candidate",
+          "evidence_summary": "结果描述交集筛选 Hypoxia-TAM signature genes、secreted protein genes 和 hypoxia response gene set，ADM 为唯一候选。"
+        }
+      ],
+      "reference_only_not_ground_truth": true
+    }
+  ]
+}
