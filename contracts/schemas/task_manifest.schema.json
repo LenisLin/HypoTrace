@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HypoTrace Task Manifest",
+  "type": "object",
+  "required": ["task_id", "task_name", "task_level", "source_route", "modality", "domain", "nas_bundle_root"],
+  "properties": {
+    "task_id": {"type": "string"},
+    "task_name": {"type": "string"},
+    "task_level": {"type": "string"},
+    "source_route": {"type": "string"},
+    "modality": {"type": "array", "items": {"type": "string"}},
+    "domain": {"type": "string"},
+    "allowed_conditions": {"type": "array", "items": {"type": "string"}},
+    "expected_submission": {"type": "string"},
+    "nas_bundle_root": {"type": "string"},
+    "data_manifest": {"type": "string"},
+    "prompt": {"type": "string"},
+    "budget": {"type": "object"}
+  }
+}

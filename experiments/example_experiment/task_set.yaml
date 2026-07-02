@@ -1,0 +1,10 @@
+task_set_id: example_smoke_task_set
+tasks:
+  - task_id: toy_task
+    source: smoke_fixture
+    path: examples/toy_task
+    notes: >
+      This entry references the current smoke fixture for loader and CLI
+      compatibility. Real benchmark entries should resolve Git task registry
+      entries and NAS full task bundles without copying hidden references into
+      the experiment package.

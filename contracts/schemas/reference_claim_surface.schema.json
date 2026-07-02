@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HypoTrace Reference Claim Surface",
+  "type": "object",
+  "required": ["reference_claims"],
+  "properties": {
+    "reference_claims": {"type": "array"}
+  }
+}

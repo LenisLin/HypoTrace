@@ -1,0 +1,22 @@
+submission_files:
+  - trace_manifest.json
+  - scientific_chain.jsonl
+  - execution_subchains.jsonl
+  - artifacts.jsonl
+  - final_claims.json
+  - final_report.md
+
+workspace_dir: workspace
+workspace_subdirs:
+  - scripts
+  - notebooks
+  - figures
+  - tables
+  - logs
+
+schema_paths:
+  trace_manifest: contracts/schemas/trace_manifest.schema.json
+  scientific_chain: contracts/schemas/scientific_chain.schema.json
+  execution_subchains: contracts/schemas/execution_subchains.schema.json
+  artifacts: contracts/schemas/artifacts.schema.json
+  final_claims: contracts/schemas/final_claims.schema.json

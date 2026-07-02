@@ -1,0 +1,24 @@
+schema_validation:
+  enabled: true
+  submission_contract: contracts/submission_contract.yaml
+
+deterministic_metrics:
+  enabled: true
+  metrics:
+    - trace_parseability
+    - hvu_completeness
+    - result_conclusion_separation
+    - artifact_validity
+    - evidence_backed_claim_rate
+
+llm_judge:
+  enabled: false
+  model: null
+
+expert_ranking_export:
+  enabled: false
+  format: jsonl
+
+outputs:
+  score_file: scores.json
+  summary_file: summary.csv

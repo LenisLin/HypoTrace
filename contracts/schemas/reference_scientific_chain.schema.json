@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HypoTrace Reference Scientific Chain",
+  "type": "object",
+  "required": ["reference_units"],
+  "properties": {
+    "reference_units": {"type": "array"}
+  }
+}

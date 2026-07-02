@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HypoTrace Trace Manifest",
+  "type": "object",
+  "required": ["task_id", "run_id", "submission_files"],
+  "properties": {
+    "task_id": {"type": "string"},
+    "run_id": {"type": "string"},
+    "model": {"type": "object"},
+    "harness": {"type": "object"},
+    "condition": {"type": "string"},
+    "created_at": {"type": "string"},
+    "submission_files": {"type": ["array", "object"]},
+    "workspace_dir": {"type": "string"},
+    "workspace_subdirs": {"type": "array", "items": {"type": "string"}}
+  }
+}

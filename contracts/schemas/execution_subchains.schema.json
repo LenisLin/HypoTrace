@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HypoTrace Execution Subchain Record",
+  "type": "object",
+  "required": [
+    "execution_subchain_id",
+    "linked_scientific_unit_id",
+    "stage_question",
+    "execution_goal",
+    "steps",
+    "result_extraction"
+  ],
+  "properties": {
+    "execution_subchain_id": {"type": "string"},
+    "linked_scientific_unit_id": {"type": "string"},
+    "stage_question": {"type": "string"},
+    "execution_goal": {"type": "string"},
+    "steps": {"type": "array"},
+    "result_extraction": {"type": "object"}
+  }
+}

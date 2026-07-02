@@ -1,0 +1,16 @@
+task_id: replace_with_task_id
+data_access_class: nas_bundle
+nas_locator:
+  bundle_root: /mnt/NAS_21T/ProjectData/HypoTrace_Data/tasks/replace_with_task_id
+  agent_visible_inputs: input/
+checksums:
+  manifest_sha256: sha256:replace_with_manifest_checksum
+  data_snapshot_sha256: sha256:replace_with_data_snapshot_checksum
+modality:
+  - replace_with_modality
+organism: replace_with_organism
+tissue: replace_with_tissue
+notes: >
+  This Git registry manifest records locators and checksums only. Raw data,
+  prepared data, hidden references, truth files, and reference outputs remain
+  in the NAS full task bundle or evaluator-only storage.

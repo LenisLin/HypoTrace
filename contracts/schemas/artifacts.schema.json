@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HypoTrace Artifact Record",
+  "type": "object",
+  "required": ["artifact_id", "artifact_type", "path", "created_by", "derived_from"],
+  "properties": {
+    "artifact_id": {"type": "string"},
+    "artifact_type": {"type": "string"},
+    "path": {"type": "string"},
+    "created_by": {"type": "string"},
+    "derived_from": {"type": "array"},
+    "checksum": {"type": ["string", "null"]},
+    "summary": {"type": "string"},
+    "validation_status": {"type": "string"},
+    "validation_expectation": {"type": "string"}
+  }
+}

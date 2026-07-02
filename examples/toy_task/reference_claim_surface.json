@@ -1,0 +1,11 @@
+{
+  "reference_claims": [
+    {
+      "claim_id": "RC01",
+      "claim_text": "The toy task can validate the HypoTrace output schema.",
+      "required_evidence_types": ["schema-valid submission files"],
+      "acceptable_alternative_claims": ["The task is suitable for schema smoke testing."],
+      "forbidden_overclaims": ["real biological conclusion", "method benchmark result"]
+    }
+  ]
+}

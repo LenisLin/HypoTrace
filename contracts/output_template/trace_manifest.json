@@ -1,0 +1,21 @@
+{
+  "run_id": "",
+  "task_id": "",
+  "condition": "",
+  "submission_files": [
+    "trace_manifest.json",
+    "scientific_chain.jsonl",
+    "execution_subchains.jsonl",
+    "artifacts.jsonl",
+    "final_claims.json",
+    "final_report.md"
+  ],
+  "workspace_dir": "workspace",
+  "workspace_subdirs": [
+    "scripts",
+    "notebooks",
+    "figures",
+    "tables",
+    "logs"
+  ]
+}

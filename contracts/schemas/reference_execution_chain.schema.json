@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HypoTrace Reference Execution Chain",
+  "type": "object",
+  "required": ["reference_execution_units"],
+  "properties": {
+    "reference_execution_units": {"type": "array"}
+  }
+}

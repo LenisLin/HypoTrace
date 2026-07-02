@@ -1,0 +1,9 @@
+runner: dry_run
+data_root: /mnt/NAS_21T/ProjectData/HypoTrace_Data
+container:
+  enabled: false
+  image: null
+limits:
+  walltime_minutes: 5
+  cpus: 1
+  memory_gb: 1

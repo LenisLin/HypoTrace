@@ -1,0 +1,1 @@
+"""HypoTrace benchmark protocol skeleton."""

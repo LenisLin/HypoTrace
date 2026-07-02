@@ -1,0 +1,19 @@
+task_id: replace_with_task_id
+task_name: Replace with task name
+task_level: replace_with_level
+source_route: replace_with_source_route
+modality:
+  - replace_with_modality
+domain: replace_with_domain
+allowed_conditions:
+  - A_base
+  - B_easy_bio_skill
+  - C_bioharness
+expected_submission: HypoTrace submission
+nas_bundle_root: /mnt/NAS_21T/ProjectData/HypoTrace_Data/tasks/replace_with_task_id
+data_manifest: data_manifest.yaml
+prompt: task_prompt.md
+budget:
+  walltime_minutes: 30
+  max_turns: 20
+  max_tool_calls: 50
