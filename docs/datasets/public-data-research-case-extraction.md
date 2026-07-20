@@ -9,11 +9,11 @@ reference material, a runnable workflow, or a new data contract.
 
 ## Research Case Unit
 
-A public-data research case is one bounded scientific-analysis unit anchored to
-one primary research paper and one or more public dataset records that support
-that paper's stated analysis context. The case is not a database entry, a whole
-dataset, or a paper abstract. It records the selected scientific question,
-article scope, and public-data linkage needed to later curate a dual chain.
+A public-data research case is a localized public dataset slice with verified
+paper/sample linkage, a bounded article-specific scientific result scope,
+source-supported result material, and a reconstructable execution route. The
+case is not a database entry, dataset, paper, figure, accession, portal-native
+analysis, or whole-paper reproduction.
 
 ## Entities And Linkage
 
@@ -29,10 +29,10 @@ article scope, and public-data linkage needed to later curate a dual chain.
   shared scientific-chain and execution-subchain rules; it is neither a gold
   trajectory nor an input to the agent.
 
-The linkage record must make the database-to-dataset-to-primary-paper-to-case
-relationship inspectable. A database link without an identified primary paper,
-or a paper without a defensible public-data link, is not sufficient to define a
-case.
+The linkage record must make the database, dataset, primary paper,
+sample/section, accession, file/object, and case relationships inspectable. A
+database link without an identified primary paper, or a paper without a
+defensible public-data link, is not sufficient to define a case.
 
 ## Admission Closures
 
@@ -41,10 +41,11 @@ case extraction.
 
 ### Linkage Closure
 
-The selected database record, dataset identity, primary paper, and case scope
-are linked without relying on inference from a title alone. The record should
-allow a reviewer to determine why the data belong to the selected paper and
-why the selected case is a bounded use of those data.
+The selected database record, dataset identity, primary paper, sample or
+section, accession, file or object, and case scope are linked through
+inspectable relationships. Title similarity alone is insufficient. The record
+should allow a reviewer to determine why the data belong to the selected paper
+and why the selected case is a bounded use of those data.
 
 ### Scientific-Scope Closure
 
@@ -52,6 +53,12 @@ The primary paper anchors the research question, biological system, data use,
 and analysis context. A case states only the scope supported by its selected
 source material. It does not promote an article conclusion to ground truth or
 extend the case to unrelated data or results.
+
+When a paper integrates multiple modalities, retain only a public-data subset
+that forms an independent scientific unit. Claims that require missing
+modalities, unavailable patient-level metadata, perturbation evidence, or other
+unavailable inputs must be narrowed or excluded and must not be inherited by
+the case.
 
 ### Localization And Execution Closure
 
@@ -61,25 +68,37 @@ the necessary materials can be reached and inspected; it does not prescribe a
 specific processing pipeline, executable command, manifest format, or run
 status.
 
+Required public objects may come from STOmicsDB or verified article-linked
+public repositories. Alternative public objects require sample/object identity
+verification, and access controls are not bypassed. Restricted CNP/Project
+archives may be recorded as provenance but cannot close the case. If an
+essential object is unavailable, the case scope must be narrowed or the case
+must be rejected.
+
 ## Generic Workflow
 
 1. Discover candidate public records through a database.
-2. Identify a dataset record and its associated primary research paper.
-3. Bound a research case to a specific scientific question and paper-supported
-   analysis context.
-4. Check linkage, scientific-scope, and localization/execution closure.
-5. Hand an admitted case to the shared data-localization and dual-chain
-   procedures.
-6. Defer task packaging, hidden references, and benchmark admission until their
+2. Identify the dataset, sample or section, accession, file or object, and
+   associated primary research paper relationships.
+3. Decompose the paper's result dependencies and bound an independent
+   scientific unit with source-supported result material.
+4. Admit the case only after linkage, scientific-scope, and
+   localization/execution closure are satisfied.
+5. Localize the admitted case's verified source and data objects.
+6. Hand the admitted and localized case to the shared dual-chain extraction and
+   independent-check procedures.
+7. Defer task packaging, hidden references, and benchmark admission until their
    separate decisions are made.
 
 ## First-Round Source Profile: STOmicsDB And STDS
 
-STOmicsDB is the selected public-data source for first-round intake. STDS
-records are used as the source profile for discovering candidate spatial
-transcriptomics datasets and their linked research context. Intake remains
-article-anchored: a record becomes a candidate only after a primary paper and a
-bounded research case can be identified.
+STOmicsDB is the selected public-data source for first-round intake. STDS means
+a STOmicsDB Dataset record and is only a discovery identity. Portal metadata
+supports discovery and linkage; it is not scientific result evidence.
+Portal-native cases and downstream reuse papers are excluded. Only verified
+primary/originating biomedical research articles enter first-round intake, and
+a record becomes a candidate only after such a paper and a bounded research
+case can be identified.
 
 First-round screening accepts only anonymous-public access routes: a curator
 must be able to inspect the relevant public record and data-access route without
@@ -90,12 +109,24 @@ close a public-data case.
 
 ## Data-Root Boundary
 
-The following separation is conceptual and follows the existing data contract:
+The following source-specific layout is conceptual and follows the existing
+data contract:
 
-- `raw/public_database/` holds immutable downloaded or externally supplied
-  public-database input material.
-- `raw_data/public_database/` holds pre-task source-screening and curation
-  material for public-database research cases.
+```text
+raw/public_database/<source>/
+raw_data/public_database/<source>/
+  registry/
+  datasets/
+  papers/
+  cases/
+```
+
+`raw/public_database/<source>/` holds immutable downloaded or externally
+supplied public-database input material. Within
+`raw_data/public_database/<source>/`, `registry/` records intake, linkage, and
+admission state; `datasets/` holds shared dataset, sample, and file assets;
+`papers/` holds localized article and source packages; and `cases/` holds
+paper-specific bounded slices.
 
 No new shared data layout, manifest, or runtime artifact is introduced here.
 The definitive NAS rules remain in [Data Contract](data-contract.md).
@@ -107,8 +138,12 @@ storage, and Git/NAS boundaries. It reuses [Dual Chain
 Extraction](dual-chain-extraction.md) for case-derived scientific and execution
 chains. This route does not duplicate either document.
 
+`method_slug`, method-level screening, and tool/method case-reference reuse do
+not define this route.
+
 ## Deferred Decisions
 
-The following are intentionally unresolved: detailed per-case manifest fields,
-curation statuses, exact localization checks, executable analysis procedures,
-task-package admission, hidden-reference design, and benchmark evaluation.
+The following are intentionally unresolved: linkage and manifest fields, case
+ID syntax, derived-information materialization, runnable validation, exact
+Stage numbering, pilot admission, batch orchestration, task-package admission,
+hidden-reference design, and benchmark evaluation.
