@@ -6,6 +6,10 @@ This document records the source-screening order for the first HypoTrace ST task
 
 This round is limited to spatial transcriptomics and closely related ST analysis tasks. Task levels, final task schema, and hidden reference structure are deferred until concrete examples are selected.
 
+The canonical route for public-data research cases is [Public-Data Research Case
+Extraction](public-data-research-case-extraction.md). This screening document
+records source status and candidate pools; it does not duplicate that route.
+
 ## Discussion Order
 
 1. Benchmark-derived sources
@@ -50,11 +54,16 @@ source overview.
 
 ## Database-Supported Biomedical Research Paper Sources
 
+The active first-round public-data source is STOmicsDB/STDS. Its case route is
+defined in [Public-Data Research Case
+Extraction](public-data-research-case-extraction.md), including the
+article-anchored scope and public-access boundary.
+
 | Source | Link | Current status | Notes |
 |---|---|---|---|
-| 10x Genomics official datasets | https://www.10xgenomics.com/datasets | data-access entry point | Use as downloadable data source; research-paper linkage to be considered later. |
-| CROST | TODO | deferred | More entries to be added later. |
-| STOmics | TODO | deferred | More entries to be added later. |
+| STOmicsDB / STDS | [canonical public-data route](public-data-research-case-extraction.md) | selected for active Round-1 intake | Screen article-anchored, anonymously public cases through the canonical route. |
+| 10x Genomics official datasets | https://www.10xgenomics.com/datasets | deferred from active Round-1 intake | Retain as a future data-access route; do not add cases to the current intake. |
+| CROST | not yet selected | deferred from active Round-1 intake | Retain for later source assessment; do not add cases to the current intake. |
 | CRC CMS ST paper | https://doi.org/10.1038/s41698-023-00488-4 | high-priority candidate | Data/code available via Zenodo and GitHub; discuss after benchmark and tool-paper routes. |
 | Spatial multi-modal atlas of bone tissue from human femur | https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE284089 | confirmed public data; localized | Identified through SpatialBench screening and retained here as a research/database source. GEO raw tar localized at `/mnt/NAS_21T/ProjectData/HypoTrace_Data/public_raw_data/GSE284089/GSE284089_RAW.tar`; BioProject `PRJNA1196981`. |
 | Multimodal spatial transcriptomic characterization of mouse kidney injury and repair | https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE269719 ; https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE269622 ; https://doi.org/10.1038/s41467-025-62599-9 | confirmed public data; localization pending | Identified through SpatialBench screening and retained here as a research/database source. Xenium `GSE269719` and Visium `GSE269622` both map to PubMed `40813851`. |

@@ -9,6 +9,8 @@
 ## Datasets
 
 - [ST Source Screening Round 1](datasets/st-source-screening-round1.md)
+- [Public-Data Research Case Extraction](datasets/public-data-research-case-extraction.md):
+  article-anchored public-database research cases and their data-access boundary.
 - [Tool / Method Case Extraction](datasets/tool-method-case-extraction.md):
   ST tool/method paper and tutorial screening, source localization, case data
   localization, and handoff to dual-chain extraction.
