@@ -1,1 +1,1 @@
-{"execution_subchain_id":"","linked_scientific_unit_id":"","stage_question":"","execution_goal":"","steps":[],"result_extraction":{"summary":"","key_numbers":{}}}
+{"execution_subchain_id":"E01","linked_scientific_unit_id":"S01","steps":[{"step_id":"E01.1","inputs":[],"call":"","parameters":{},"outputs":[{"id":"","object_content":"","format":""}],"source_ref":null}],"result_extraction":{"observations":[{"observation":"","support":"","interpretation":""}]}}

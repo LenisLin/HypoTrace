@@ -19,7 +19,7 @@ an agent can turn open-ended biological data analysis into traceable, auditable,
 and comparable scientific conclusions using a structured path:
 
 ```text
-question/hypothesis -> method intent -> execution subchain -> result -> biological conclusion
+S00 study framing + HVU: hypothesis -> experiment -> result observations -> conclusion -> next hypothesis
 ```
 
 HypoTrace is not a new tool library or a new bioharness. Its contribution is to
@@ -38,8 +38,9 @@ Bioinformatics failures are often chain failures. An agent may run clustering bu
 misinterpret a cluster, draw a differential expression plot but write association
 as causation, or identify markers without checking sample consistency, cell-type
 composition, or clinical association. HypoTrace makes these failures visible by
-requiring every scientific progress node to expose the question, evidence need,
-method intent, execution, result, conclusion, and next question.
+requiring every scientific progress node to expose the study framing,
+hypothesis, verification experiment, linked execution subchain, result
+observations, bounded conclusion, and next hypothesis.
 
 ## Core Questions
 

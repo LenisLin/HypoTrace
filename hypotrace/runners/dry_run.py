@@ -1,4 +1,10 @@
-"""Dry-run output contract writer."""
+"""Dry-run output contract writer.
+
+The writer creates the required submission files, placeholder workspace
+directories, scores, logs, and summary file for contract smoke testing. It has
+filesystem side effects under the requested run directory only and assumes that
+no scientific analysis is executed.
+"""
 
 from __future__ import annotations
 
@@ -46,39 +52,85 @@ def create_dry_run(data_root: Path, *, run_id: str, task_id: str) -> Path:
         "grader": "dry_run",
         "errors": [],
     }
-    scientific_unit = {
+    study_framing = {
         "scientific_unit_id": "S00",
-        "unit_type": "dry_run_placeholder",
         "parent_units": [],
-        "question_or_hypothesis": "Dry-run placeholder; no scientific claim is evaluated.",
-        "evidence_need": [],
-        "method_intent": [],
-        "execution_subchain_ids": ["E00"],
+        "data_summary": {
+            "organism": None,
+            "tissue": None,
+            "data_types": [],
+            "sample_count": None,
+            "spatial_unit_count": None,
+            "sample_structure": [],
+            "grouping_variables": [],
+            "metadata_available": [],
+            "notes": ["Dry-run smoke test; no input dataset is analyzed."],
+        },
+    }
+    # Smoke-test records exercise the output contract without scientific analysis.
+    scientific_unit = {
+        "scientific_unit_id": "S01",
+        "parent_units": [],
+        "hypothesis": "Dry-run submission can create required files without scientific analysis.",
+        "experiment": {
+            "summary": "Dry-run writer creates required contract files and placeholder log.",
+            "execution_subchain_ids": ["E01"],
+        },
         "result": {
-            "computational_observation": "No computation was run.",
-            "key_artifacts": ["A00"],
+            "observations": [
+                {
+                    "observation": "The dry-run writer created a placeholder log artifact.",
+                    "support": "workspace/logs/dry_run_smoke_test.txt",
+                    "interpretation": "The artifact supports contract smoke testing only.",
+                }
+            ]
         },
         "conclusion": {
-            "biological_inference": "No biological inference is made.",
-            "scope": "schema smoke test",
-            "not_claimed": ["scientific validity", "task completion"],
+            "summary": "Smoke submission exercises output contract only."
         },
-        "next_question": None,
+        "next_hypothesis": None,
     }
     execution_subchain = {
-        "execution_subchain_id": "E00",
-        "linked_scientific_unit_id": "S00",
-        "stage_question": "Dry-run placeholder.",
-        "execution_goal": "Create required submission files without running analysis.",
-        "steps": [],
-        "result_extraction": {"summary": "No result extracted.", "key_numbers": {}},
+        "execution_subchain_id": "E01",
+        "linked_scientific_unit_id": "S01",
+        "steps": [
+            {
+                "step_id": "E01.1",
+                "inputs": [],
+                "call": "create_dry_run_submission_files",
+                "parameters": {"mode": "dry_run"},
+                "outputs": [
+                    {
+                        "id": "dry_run_log_object",
+                        "object_content": (
+                            "placeholder log file stating that no scientific "
+                            "analysis was executed"
+                        ),
+                        "format": "text",
+                    }
+                ],
+                "source_ref": {
+                    "type": "workspace_log",
+                    "locator": "workspace/logs/dry_run_smoke_test.txt",
+                },
+            }
+        ],
+        "result_extraction": {
+            "observations": [
+                {
+                    "observation": "The dry-run writer created a placeholder log artifact.",
+                    "support": "workspace/logs/dry_run_smoke_test.txt",
+                    "interpretation": "The route supports the linked smoke-test observation only.",
+                }
+            ]
+        },
     }
     artifact = {
         "artifact_id": "A00",
         "artifact_type": "log",
-        "path": "workspace/logs/dry_run_placeholder.txt",
-        "created_by": "E00",
-        "derived_from": [],
+        "path": "workspace/logs/dry_run_smoke_test.txt",
+        "created_by": "E01.1",
+        "derived_from": ["dry_run_log_object"],
         "checksum": None,
         "summary": "Dry-run placeholder artifact.",
         "validation_status": "exists_and_readable",
@@ -87,7 +139,8 @@ def create_dry_run(data_root: Path, *, run_id: str, task_id: str) -> Path:
     _write_json(submission_dir / "trace_manifest.json", manifest)
     _write_json(run_dir / "scores.json", scores)
     (submission_dir / "scientific_chain.jsonl").write_text(
-        json.dumps(scientific_unit, sort_keys=True) + "\n",
+        json.dumps(study_framing, sort_keys=True) + "\n"
+        + json.dumps(scientific_unit, sort_keys=True) + "\n",
         encoding="utf-8",
     )
     (submission_dir / "execution_subchains.jsonl").write_text(
@@ -103,7 +156,7 @@ def create_dry_run(data_root: Path, *, run_id: str, task_id: str) -> Path:
         "# Dry-run placeholder\n\nNo scientific analysis was executed.\n",
         encoding="utf-8",
     )
-    (workspace_dir / "logs" / "dry_run_placeholder.txt").write_text(
+    (workspace_dir / "logs" / "dry_run_smoke_test.txt").write_text(
         "Dry-run placeholder artifact. No scientific analysis was executed.\n",
         encoding="utf-8",
     )

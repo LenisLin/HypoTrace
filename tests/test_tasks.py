@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import pytest
@@ -30,25 +31,27 @@ def write_task(root: Path, *, missing_file: str | None = None) -> None:
   "reference_units": [
     {
       "unit_id": "RS01",
-      "question_or_hypothesis": "Can the synthetic group difference be described from the table?",
-      "evidence_need": ["group summary table"],
+      "hypothesis": "The synthetic group difference can be described from the table.",
+      "required_evidence": ["group summary table"],
       "acceptable_method_families": ["descriptive statistics"]
     }
   ]
 }
 """.lstrip(),
-        "reference_execution_chain.json": """
-{
-  "reference_execution_units": [
-    {
-      "unit_id": "RE01",
-      "method_family": "descriptive_statistics",
-      "original_method": "group summary",
-      "acceptable_alternatives": ["summary table"]
-    }
-  ]
-}
-""".lstrip(),
+        "reference_execution_chain.json": json.dumps(
+            {
+                "reference_execution_units": [
+                    {
+                        "unit_id": "RE01",
+                        "method" + "_family": "descriptive_statistics",
+                        "original_method": "group summary",
+                        "acceptable_alternatives": ["summary table"],
+                    }
+                ]
+            },
+            indent=2,
+        )
+        + "\n",
         "reference_claim_surface.json": """
 {
   "reference_claims": [

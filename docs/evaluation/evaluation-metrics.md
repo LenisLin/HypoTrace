@@ -41,15 +41,21 @@ These describe behavior and cost. They are not automatically good or bad.
 
 ## Execution Quality
 
-- Execution Completion Rate: successful execution steps divided by declared steps.
+Runtime status and code provenance metrics apply to agent-run extensions and
+logs, not to the shared case-derived execution core.
+
 - Artifact Validity Rate: existing and readable artifacts divided by declared artifacts.
-- Code Provenance Coverage: execution steps with code path divided by declared steps.
-- Parameter Recording Rate: execution steps with parameters divided by declared steps.
+- Agent-Run Execution Completion Rate: runtime-successful extension/log steps
+  divided by declared runtime steps.
+- Agent-Run Code Provenance Coverage: extension/log steps with code provenance
+  divided by declared runtime steps.
+- Core Parameter Recording Rate: shared-core execution steps with non-empty
+  `parameters` divided by declared core execution steps.
 
 ## Scientific-Execution Coupling
 
-- Scientific-Execution Linkage: non-planning HVUs with execution subchains divided
-  by non-planning HVUs.
+- Scientific-Execution Linkage: non-framing HVUs with execution subchains divided
+  by non-framing HVUs.
 - Evidence-Backed Claim Rate: final claims with data-to-execution-to-artifact-to-result
   paths divided by final claims.
 - Orphan Execution Rate: execution subchains without linked HVUs divided by all

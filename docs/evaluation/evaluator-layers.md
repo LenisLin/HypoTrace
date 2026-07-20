@@ -3,6 +3,9 @@
 HypoTrace evaluation is post-hoc. Evaluator code reads the completed submission,
 hidden references, and passive logs after a run has ended.
 
+Runtime status and code provenance metrics apply to agent-run extensions and
+logs, not to the shared case-derived execution core.
+
 ## Layer 0: File And Parse Validation
 
 Checks:
@@ -48,8 +51,6 @@ Metrics:
 
 - Artifact Validity Rate.
 - Artifact Provenance Coverage.
-- Code Provenance Coverage.
-- Parameter Recording Rate.
 
 ## Layer 3: Trace Graph Construction
 
@@ -58,6 +59,7 @@ Graph nodes:
 - ScientificUnitNode.
 - ExecutionSubchainNode.
 - ExecutionStepNode.
+- DataObjectNode.
 - ArtifactNode.
 - ClaimNode.
 
@@ -65,9 +67,13 @@ Edges:
 
 - ScientificUnit requires ExecutionSubchain.
 - ExecutionSubchain contains ExecutionStep.
+- ExecutionStep consumes DataObject.
+- ExecutionStep produces DataObject.
+- Artifact materializes DataObject.
 - ExecutionStep produces Artifact.
+- ScientificUnit depends on parent ScientificUnit.
 - ScientificUnit observes Result.
-- Claim derives from ScientificUnit.
+- Claim derives from direct and required parent ScientificUnit nodes.
 - Claim is supported by Artifact.
 
 Metrics:
@@ -76,6 +82,12 @@ Metrics:
 - Evidence-Backed Claim Rate.
 - Orphan Execution Rate.
 - Unsupported Conclusion Rate.
+- Core Parameter Recording Rate.
+- Core Source Reference Coverage.
+
+Runtime-only metrics such as execution completion and code provenance coverage
+are computed from agent-run extensions or logs. They must not require `status`
+or `code_path` fields inside shared-core `execution_subchains.jsonl`.
 
 ## Layer 4: Reference Alignment
 

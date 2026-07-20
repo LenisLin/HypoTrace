@@ -5,26 +5,29 @@
 The basic unit of the scientific chain is a Hypothesis-Verification Unit, or HVU.
 
 ```text
-HVU =
-  Question / Hypothesis
-  Evidence Need
-  Method Intent
-  Execution Subchain(s)
+Study Framing:
+  S00 data summary
+
+HVU:
+  Hypothesis
+  Experiment
   Result
-  Biological Conclusion
-  Next Question
+  Conclusion
+  Next Hypothesis
 ```
 
 The required distinction is:
 
 ```text
 Result = computational observation from data
-Conclusion = biological inference drawn from the result
+Conclusion = bounded scientific interpretation drawn from the result
 ```
 
 This distinction is central. Marker co-expression is not definitive cell identity,
 association is not causation, and ligand-receptor enrichment is not direct proof
-of physical cell communication.
+of physical cell communication. Biological interpretation is appropriate only
+when the data, study design, and analysis evidence support it; otherwise use
+methodological or descriptive interpretation.
 
 ## Submission Layout
 
@@ -51,79 +54,42 @@ advantage of one harness.
 
 ## `scientific_chain.jsonl`
 
-Each line is one HVU:
+`scientific_chain.jsonl` contains one isolated `S00` study-framing record
+followed by one or more HVU records:
 
-```json
-{
-  "scientific_unit_id": "S03",
-  "unit_type": "hypothesis_verification",
-  "parent_units": ["S02"],
-  "question_or_hypothesis": "Does cluster 5 represent an exhausted CD8 T-cell state associated with non-response?",
-  "evidence_need": [
-    "cluster 5 expresses CD8 T-cell markers",
-    "cluster 5 expresses exhaustion markers",
-    "cluster 5 is enriched in non-responders"
-  ],
-  "method_intent": [
-    "marker expression analysis",
-    "cluster-level group association analysis"
-  ],
-  "execution_subchain_ids": ["E03"],
-  "result": {
-    "computational_observation": "Cluster 5 expresses CD8E, PDCD1 and CTLA4; its abundance is higher in non-responders.",
-    "key_artifacts": ["A11", "A12", "A13"]
-  },
-  "conclusion": {
-    "biological_inference": "Cluster 5 is consistent with an exhausted CD8 T-cell state associated with non-response.",
-    "scope": "association within this dataset",
-    "not_claimed": ["causality", "clinical predictive validity"]
-  },
-  "next_question": "Is the exhausted T-cell signal spatially localized or associated with specific tumor regions?"
-}
+Use task-specific names and values in completed submissions; do not leave
+placeholder markers unresolved. Use integers when counts are known; use `null`
+when counts are unresolved.
+
+```jsonl
+{"scientific_unit_id":"S00","parent_units":[],"data_summary":{"organism":"<task_organism>","tissue":"<task_tissue_or_context>","data_types":["<data_type>"],"sample_count":null,"spatial_unit_count":null,"sample_structure":["<sample_or_replicate_structure>"],"grouping_variables":["<group_or_condition>"],"metadata_available":["<metadata_field>"],"notes":["<data_limit_or_assumption>"]}}
+{"scientific_unit_id":"S01","parent_units":[],"hypothesis":"<feature_or_population> is associated with <region_group_or_outcome>.","experiment":{"summary":"<annotation_or_deconvolution_and_association_or_enrichment_analysis>.","execution_subchain_ids":["E01"]},"result":{"observations":[{"observation":"The analysis produced <named_result_object> showing <task_specific_feature_or_population> with <reported_value_or_statistic> for <task_specific_region_group_or_outcome>.","support":"<named_result_object_or_artifact_locator>","interpretation":"This supports <bounded_descriptive_or_associational_interpretation> within task limits."}]},"conclusion":{"summary":"Within the task data and design limits, the result observations support <bounded_descriptive_or_associational_interpretation>."},"next_hypothesis":"<next_hypothesis_or_null>"}
 ```
 
 ## `execution_subchains.jsonl`
 
-Each line is one execution subchain. A scientific unit may link to one or more
-execution subchains.
+Each line is one execution subchain. Each non-framing HVU should have one
+primary execution subchain that reaches the result material for that HVU.
 
-```json
-{
-  "execution_subchain_id": "E03",
-  "linked_scientific_unit_id": "S03",
-  "stage_question": "Does cluster 5 represent an exhausted CD8 T-cell state associated with non-response?",
-  "execution_goal": "Quantify marker expression and response association for cluster 5.",
-  "steps": [
-    {
-      "step_id": "E03.1",
-      "action": "compute marker expression for cluster 5",
-      "method": "Scanpy dotplot and mean expression summary",
-      "parameters": {"markers": ["CD8E", "PDCD1", "CTLA4"]},
-      "code_path": "workspace/scripts/E03_1_marker_expression.py",
-      "output_artifacts": ["A11"],
-      "status": "success"
-    }
-  ],
-  "result_extraction": {
-    "summary": "Cluster 5 is marker-consistent with exhausted CD8 T cells and enriched in non-responders.",
-    "key_numbers": {"effect_direction": "NR > R", "q_value": 0.018}
-  }
-}
+A subchain must contain at least one step, and each step must produce at least
+one named output object. Steps that load or create the first object may use an
+empty `inputs` array when no upstream object exists.
+
+Do not use execution steps to restate the scientific hypothesis. The scientific
+hypothesis lives in `scientific_chain`; `execution_subchains` record ordered
+method calls and extracted result material.
+
+Inputs that consume prior outputs should reuse the prior output object ID. The
+evaluator may resolve these logical object links across execution subchains.
+
+```jsonl
+{"execution_subchain_id":"E01","linked_scientific_unit_id":"S01","steps":[{"step_id":"E01.1","inputs":[{"id":"<input_object_id>","object_content":"<task_input_object_content>","format":"<format>"}],"call":"<actual_loader_or_preprocessing_call>","parameters":{"<key_parameter>":"<value>"},"outputs":[{"id":"<prepared_object_id>","object_content":"<prepared_object_content>","format":"<format>"}],"source_ref":{"type":"workspace_script_or_notebook","locator":"workspace/<script_or_notebook_locator>"}},{"step_id":"E01.2","inputs":[{"id":"<prepared_object_id>","object_content":"<prepared_object_content>","format":"<format>"}],"call":"<actual_analysis_call>","parameters":{"<key_parameter>":"<value>"},"outputs":[{"id":"<named_result_object>","object_content":"<result_object_content>","format":"<table_figure_or_object_format>"}],"source_ref":{"type":"workspace_script_or_notebook","locator":"workspace/<script_or_notebook_locator>"}}],"result_extraction":{"observations":[{"observation":"The ordered route produced <named_result_object> showing <task_specific_feature_or_population> with <reported_value_or_statistic>.","support":"<named_result_object_or_artifact_locator>","interpretation":"The route supports the linked HVU result observation within task limits."}]}}
 ```
 
 ## `artifacts.jsonl`
 
-```json
-{
-  "artifact_id": "A12",
-  "artifact_type": "table",
-  "path": "workspace/tables/cluster5_response_association.csv",
-  "created_by": "E03.2",
-  "derived_from": ["input_adata"],
-  "checksum": "sha256:...",
-  "summary": "Cluster 5 abundance comparison between responders and non-responders.",
-  "validation_status": "exists_and_readable"
-}
+```jsonl
+{"artifact_id":"A01","artifact_type":"<table_figure_log_or_model>","path":"workspace/<subdir>/<task_specific_file>","created_by":"E01.2","derived_from":["<named_result_object>"],"checksum":"sha256:<hash_or_unavailable>","summary":"Artifact containing <task_specific_result_material>.","validation_status":"exists_and_readable"}
 ```
 
 ## `final_claims.json`
@@ -132,15 +98,14 @@ execution subchains.
 {
   "claims": [
     {
-      "claim_id": "C03",
-      "claim_text": "An exhausted CD8 T-cell-like cluster is associated with non-response.",
-      "derived_from_scientific_units": ["S03"],
-      "supporting_execution_subchains": ["E03"],
-      "supporting_artifacts": ["A11", "A12", "A13"],
+      "claim_id": "C01",
+      "claim_text": "<bounded_task_specific_scientific_claim>",
+      "derived_from_scientific_units": ["S01"],
+      "supporting_execution_subchains": ["E01"],
+      "supporting_artifacts": ["A01"],
       "evidence_vector": {
-        "marker_support": 0.83,
-        "group_association": 0.91,
-        "sample_consistency": 0.78,
+        "result_traceability": 0.83,
+        "statistical_rigor": 0.78,
         "traceability": 1.0,
         "overclaim_penalty": 0.0
       }

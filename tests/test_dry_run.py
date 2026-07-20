@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 
+import jsonschema
+
 from hypotrace.runners.dry_run import create_dry_run
 
 
@@ -50,15 +52,27 @@ def test_create_dry_run_writes_smoke_test_submission_contract(tmp_path: Path) ->
         "grader": "dry_run",
         "errors": [],
     }
-    assert json.loads(scientific_chain)["unit_type"] == "dry_run_placeholder"
-    assert json.loads(execution_subchains)["execution_subchain_id"] == "E00"
+    scientific_records = [json.loads(line) for line in scientific_chain.splitlines()]
+    execution_records = [json.loads(line) for line in execution_subchains.splitlines()]
+    assert "sample_structure" in scientific_records[0]["data_summary"]
+    assert scientific_records[1]["experiment"]["execution_subchain_ids"] == ["E01"]
+    assert scientific_records[1]["result"]["observations"][0]
+    assert execution_records[0]["execution_subchain_id"] == "E01"
+    assert execution_records[0]["steps"][0]["step_id"] == "E01.1"
+    assert execution_records[0]["result_extraction"]["observations"][0]
     artifact = json.loads(artifacts)
     assert artifact["artifact_id"] == "A00"
-    assert artifact["path"] == "workspace/logs/dry_run_placeholder.txt"
+    assert artifact["path"] == "workspace/logs/dry_run_smoke_test.txt"
+    assert artifact["created_by"] == "E01.1"
     assert (run_dir / "submission" / artifact["path"]).is_file()
     assert final_claims == {"claims": []}
     assert "Dry-run placeholder" in final_report
     assert summary == "run_id,task_id,score,passed\nrun-001,toy_task,,"
+
+    _validate_jsonl(scientific_records, Path("contracts/schemas/scientific_chain.schema.json"))
+    _validate_jsonl(execution_records, Path("contracts/schemas/execution_subchains.schema.json"))
+    _validate_jsonl([artifact], Path("contracts/schemas/artifacts.schema.json"))
+    _validate_json(final_claims, Path("contracts/schemas/final_claims.schema.json"))
 
 
 def test_create_dry_run_removes_obsolete_root_level_trace_files(tmp_path: Path) -> None:
@@ -71,3 +85,14 @@ def test_create_dry_run_removes_obsolete_root_level_trace_files(tmp_path: Path) 
 
     assert not (run_dir / "manifest.json").exists()
     assert not (run_dir / "trajectory.jsonl").exists()
+
+
+def _validate_json(payload: object, schema_path: Path) -> None:
+    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    jsonschema.validate(payload, schema)
+
+
+def _validate_jsonl(records: list[object], schema_path: Path) -> None:
+    schema = json.loads(schema_path.read_text(encoding="utf-8"))
+    for record in records:
+        jsonschema.validate(record, schema)

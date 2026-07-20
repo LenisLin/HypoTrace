@@ -1,0 +1,536 @@
+# Dual Chain Extraction
+
+## Purpose
+
+Dual-chain records have two distinct uses in HypoTrace:
+
+1. `agent-submitted dual chain`: an agent-facing output constraint for benchmark
+   submissions.
+2. `case-derived dual chain`: an evaluator-facing curation artifact extracted
+   from screened papers, tutorials, or examples.
+
+Both uses share the same core scientific-chain and execution-subchain schema.
+They differ in provenance, visibility, and required execution granularity. The
+case-derived chain is not a ground-truth trajectory and must not be exposed as
+agent input.
+
+## Core Principle
+
+Use a shared core schema with different wrappers.
+
+Agent-submitted chain:
+
+- is submitted by the agent during a benchmark run
+- must represent the agent's actual execution
+- should contain real, checkable code paths, parameters, artifacts, and outputs
+- belongs under the run `submission/` directory
+
+Case-derived chain:
+
+- is extracted by a curator from a screened paper, tutorial, or example
+- is evaluator-facing
+- is a curation artifact, not ground truth
+- starts after pre-chain localization has produced `source_manifest.yaml` and
+  `case_data_manifest.yaml`
+- requires selected localized sources to support the selected execution
+  granularity and case data localization to be `DATA_READY`
+- uses either `source_analysis_granularity` or
+  `concrete_execution_granularity`
+- is insufficient if it only restates narrative paper text
+
+## Shared Core Files
+
+Both chain types strictly reuse the core JSONL files:
+
+- `contracts/output_template/scientific_chain.jsonl`
+- `contracts/output_template/execution_subchains.jsonl`
+
+Do not add case-specific provenance, visibility, source-section, or extraction
+status fields to the JSONL rows. Store those wrapper fields in
+`chain_manifest.yaml`.
+
+## Case-Derived Chain Files
+
+Each screened case should use the same method/case structure as source
+screening, with one directory per extracted scientific chain:
+
+```text
+raw_data/tool_method/<method_slug>/
+  screen/
+    screening.yaml
+  cases/
+    <case_id>/
+      case_screen.yaml
+      source_manifest.yaml
+      data/
+        case_data_manifest.yaml
+      dual_chain/
+        <chain_id>/
+          chain_manifest.yaml
+          scientific_chain.jsonl
+          execution_subchains.jsonl
+          independent_check.md
+```
+
+The case-level `source_manifest.yaml` is consumed from
+`raw_data/tool_method/<method_slug>/cases/<case_id>/source_manifest.yaml`.
+`chain_manifest.yaml:source_manifest` stores that data-root-relative path, not
+a copied manifest under the chain directory.
+
+Method-level `screening.yaml` is consumed from
+`raw_data/tool_method/<method_slug>/screen/screening.yaml`.
+The case-specific screen slice is consumed from
+`raw_data/tool_method/<method_slug>/cases/<case_id>/case_screen.yaml`. The case
+data manifest is consumed from
+`raw_data/tool_method/<method_slug>/cases/<case_id>/data/case_data_manifest.yaml`.
+Downstream stages use method-level `screening.yaml` to confirm method/case
+membership and use `case_screen.yaml` as the case-specific context. The case
+screen provides data-access leads; it is not evidence for a scientific chain.
+Case-derived dual-chain extraction starts after pre-chain localization. It
+consumes method-level `screening.yaml`, `method_slug`, `case_id`,
+`case_screen.yaml`, `source_manifest.yaml`, and `case_data_manifest.yaml`. Chain
+JSONL files are created only when localized source material can support at
+least one HVU/E pair and
+`case_data_manifest.yaml:data_localization_status` is `DATA_READY`.
+
+One screened case may produce zero, one, or multiple `dual_chain/<chain_id>/`
+directories. Do not create empty JSONL files until real extraction begins.
+
+Operational split: dual-chain extraction is scoped to one `method_slug`, one
+`case_id`, and one target `dual_chain/<chain_id>/` directory. A `DATA_READY` case
+with multiple independent chain scopes uses multiple chain directories and
+dispatches. Chain-independent confirmation is scoped to one existing chain
+directory, writes that chain's `independent_check.md`, and updates only that
+chain's `chain_manifest.yaml`.
+Independent-check status and summary findings remain recorded in
+`chain_manifest.yaml:independent_check`; detailed checklist findings live in
+`independent_check.md`.
+
+A chain becomes `comparison_ready` only when:
+
+- `case_data_manifest.yaml:data_localization_status` is `DATA_READY`;
+- `chain_manifest.used_data_objects[]` resolves to localized data records;
+- chain JSONL follows the shared contract;
+- result observations are supported by localized source material or localized
+  data records;
+- `independent_check.status` is `confirmed`.
+
+## Curator Construction Workflow
+
+Case-derived chains should be constructed in this order:
+
+1. Read method-level `screening.yaml` to confirm method/case membership.
+2. Read per-case `case_screen.yaml` as case context.
+3. Read per-case `source_manifest.yaml` for localized source material.
+4. Read per-case `case_data_manifest.yaml` and require
+   `data_localization_status: DATA_READY`.
+5. Stop before creating JSONL files when localized source material or case data readiness is incomplete.
+6. Draft one chain scope in `chain_manifest.yaml`: scientific objective, data context, and dependency summary.
+7. Select `source_analysis_granularity` or `concrete_execution_granularity`.
+8. Write `S00` from source screening and localized data summaries.
+9. Draft HVU candidates from localized source and data material.
+10. Run the internal HVU candidate check before assigning final Sxx identifiers.
+11. Revise candidates until each remaining unit has one scientific target, a
+    neutral hypothesis target, minimum result material, one
+    result-to-conclusion progression, and a linked execution route.
+12. Assign final Sxx identifiers only to checked candidates.
+13. For each final HVU, write `hypothesis` as a neutral scientific or analysis
+    target, then `experiment.summary`.
+14. Use neutral verbs such as Evaluate, Compare, Assess, Estimate, or
+    Characterize. Put observed direction, values, named regions, marker
+    patterns, null results, and interpretation in result/conclusion fields.
+15. Draft the linked primary execution subchain for the HVU.
+16. Run the execution route and subchain check before accepting the HVU/E pair.
+17. Fill `result.observations[]` from result-bearing outputs or source result locators aligned with the execution route.
+18. Write `conclusion.summary` and `next_hypothesis` only after the HVU result and execution bridge are consistent.
+19. Record claimed source materials and data objects in `chain_manifest.yaml`.
+20. Leave object resolution, source-support confirmation, schema checks, and status updates to the chain-independent confirmation stage.
+
+## Chain-Independent Confirmation
+
+Chain-independent confirmation is a lightweight post-extraction checklist
+workflow. One invocation reviews one existing chain directory.
+
+1. Read method-level `screening.yaml` to confirm method/case membership.
+2. Read per-case `case_screen.yaml` as case context.
+3. Read per-case `source_manifest.yaml` and localized source material.
+4. Read per-case `case_data_manifest.yaml` and require
+   `data_localization_status: DATA_READY` before setting
+   `independent_check.status: confirmed`.
+5. Read `chain_manifest.yaml`, `scientific_chain.jsonl`, and
+   `execution_subchains.jsonl`.
+6. Parse every non-empty JSONL line and validate each record against
+   `contracts/schemas/scientific_chain.schema.json` or
+   `contracts/schemas/execution_subchains.schema.json`, as appropriate. Record
+   a parse or schema failure as `needs_revision`; schema failure alone is not
+   `blocked` when the underlying source and localized data remain available.
+7. Complete `independent_check.md` with checklist findings for case membership,
+   data readiness, source traceability, scientific chain structure, HVU
+   granularity, primary result material, execution chain structure,
+   execution-to-result alignment, data object consistency, and conclusion
+   placement.
+8. Record summary findings, `notes_location`, and final independent-check status
+   in `chain_manifest.yaml:independent_check`.
+9. Keep `chain_manifest.yaml:chain_status` consistent with the confirmation
+   outcome.
+10. Leave `scientific_chain.jsonl` and `execution_subchains.jsonl` unchanged.
+   Correctable extraction issues are recorded as revision findings.
+
+For case-derived chains, Stage 4 confirms source-extracted execution. It does
+not run, replay, or regenerate the analysis. Source-observed calls, parameters,
+assignments, returned objects, mutations, and save targets support the execution
+route; scientific observations require separate source-retained result evidence.
+
+Review result evidence from source text and figure/table annotations first,
+then retained textual or structured outputs, and inspect retained images only when needed.
+Source localization is judged for sufficiency to support the written
+chain, not for completeness.
+
+Stage 4 distinguishes unavailable confirmation evidence from correctable chain
+representation. Missing required input data or primary source evidence is
+`blocked`. Available evidence with incorrect granularity, linkage, locator,
+object reference, or result placement is `needs_revision`.
+
+The prompt template lives at
+`contracts/prompts/curation/dual_chain_independent_check.md`.
+
+## Scientific Chain Requirements
+
+`scientific_chain.jsonl` contains one `S00` study-framing record and one or more HVU records.
+
+For case-derived chains:
+
+- `S00` records data type, organism, tissue, sample count, spatial unit count, sample structure, grouping variables, available metadata, and unresolved notes.
+- `S00` does not record source conclusions, analysis scope, or QC results.
+- each HVU contains `hypothesis`, `experiment`, `result`, `conclusion`, and `next_hypothesis`.
+- `experiment.summary` records the scientific-level verification or analysis experiment.
+- `experiment.execution_subchain_ids` is the scientific-to-execution link.
+- `result.observations[]` records concrete source-supported or data-derived observations.
+- each observation contains `observation`, `support`, and `interpretation`.
+- `conclusion.summary` records the bounded interpretation across the result observations.
+- publication or tutorial source type does not change the scientific-chain core shape.
+- execution details remain in `execution_subchains.jsonl`.
+- publication-derived chains are source anchors, not ground truth trajectories.
+
+### Scientific Chain Boundary
+
+Keep HVUs in the same scientific chain when downstream hypotheses use an
+upstream result or object as an input, predictor, candidate set, score, region
+definition, comparison basis, or evidence object. Examples include a
+localization result followed by clinical association on the localized object, or
+an SVG result followed by ligand-receptor analysis on the selected genes.
+
+Split chains when the analysis object and the scientific question both change
+and no upstream dependency is needed. Method type, figure or section, statistical
+level, or dataset change alone is not a split criterion. A validation, replicate,
+or cohort extension may remain in the same chain when it tests the same
+scientific question and depends on the same upstream object or result.
+
+### HVU Candidate Check Loop
+
+Stage 3 first extracts draft HVU candidates. A draft candidate is not a final
+HVU and does not receive an Sxx identifier. Before JSONL writing, apply the
+candidate check loop:
+
+1. Scientific target check: the candidate names the scientific or analysis
+   result object being claimed.
+2. Hypothesis target check: the candidate writes the hypothesis as a neutral
+   analysis target. It names the object, dimension, comparison, relationship,
+   or spatial context to evaluate, without stating the observed direction,
+   existence, alignment, enrichment, significance, or tool success.
+3. Minimum result check: the candidate has target object,
+   relationship/pattern/context, primary result material, and support locator.
+4. Single progression check: the candidate follows one hypothesis -> experiment
+   -> result -> conclusion progression.
+5. Support embedding check: input, reference, annotation, model object,
+   plotting, and intermediate objects stay in execution or manifest context
+   when they support another result target.
+6. Conclusion closure check: conclusion.summary only synthesizes the
+   candidate's own result observations.
+7. Execution route check: the candidate has one supportable primary execution
+   route. After final Sxx identifiers are assigned, write that route as the
+   linked primary execution subchain.
+
+Split a candidate when the assertion object, evidence type, statistical level
+with verification target, claim strength, dependent downstream evidence, or
+result-to-conclusion progression changes. Use these signals together; no single
+signal is required to be sufficient by itself.
+
+Candidate target selection workflow:
+
+1. Name the candidate target object: the object the source case makes a claim
+   about.
+2. Classify supporting objects as input, reference, annotation, intermediate,
+   or result-bearing objects.
+3. Keep a candidate as a final HVU only when the source case gives the target
+   object its own hypothesis, experiment, result, and conclusion progression.
+4. Keep reference, annotation, and intermediate objects inside the linked
+   execution route when they support another target object.
+
+Do not split one HVU only because the same hypothesis uses multiple markers, features, plots, display formats, code cells, or intermediate output objects.
+
+Multiple genes, markers, cell types, panels, or metrics may remain in one HVU
+when they support the same target object and bounded claim.
+
+Keep contrastive material in one HVU when both sides define one bounded metric
+or comparison target. Split when the contrast contains separate result targets
+with separate result-to-conclusion progressions.
+
+The `result` field should describe the observation supported by the source or
+curation process. The `conclusion` field should describe the bounded
+interpretation and should distinguish association, co-localization, enrichment,
+prediction, and causal interpretation.
+Represent scope and limits in `conclusion.summary`,
+`chain_manifest.yaml.limitations`, and final or evaluator layers, not as extra
+scientific-chain core fields.
+
+Stage 4 checks observation target alignment, hypothesis-result polarity, and
+support-object placement. Stage 3 should revise final HVUs before JSONL writing
+when a candidate mixes targets, pre-writes result direction into the hypothesis,
+or places support/context objects into primary result observations.
+
+### Minimum Result Material
+
+Result and conclusion writing workflow:
+
+1. Locate the HVU target object.
+2. Extract observations using human-readable result language that names the
+   target object, states the observed relationship or pattern, gives the
+   tissue, region, layer, sample, or group context, and records a value,
+   threshold, count, score, rank, marker, named qualitative pattern,
+   source-stated direction, source-stated absence, non-detection, null result,
+   or non-significant pattern when available.
+3. Write `support` as the source locator or localized data object that supports
+   the observation.
+4. Write `interpretation` as the bounded meaning of that observation.
+5. Write `conclusion.summary` as the bounded claim supported across the
+   observations, using precise claim strength and no new facts.
+
+Observation placement rule:
+
+- Put result patterns, values, markers, regions, counts, scores, ranks,
+  thresholds, or named qualitative patterns in scientific
+  `result.observations[]`.
+- Each final HVU must include at least one primary result observation:
+  relationship, pattern, contrast, value, statistic, marker/region pattern, or
+  explicit null/non-significant result. Object existence, table shape, column
+  names, loaded files, metadata, and plotting availability are supporting
+  material unless they are paired with a primary result observation.
+- Put data loading, reference construction, model fitting, factor selection,
+  object export, plotting parameters, and localization-readiness facts in the
+  linked execution subchain, `chain_manifest.yaml` context, limitations, used
+  data, or source entries, or `observation.support` as a source/data locator
+  unless they are the result object being evaluated.
+
+## Execution Chain Requirements
+
+An execution chain is an ordered multi-step route serving one linked HVU. It
+must explain how the linked HVU's result material is produced or supported.
+Each non-framing HVU should have one primary execution subchain that covers the
+full experiment-to-result route for that HVU. Additional execution
+subchains are allowed only for independent verification routes, not for ordinary
+intermediate steps or complementary evidence within the same route.
+
+### Execution Route and Subchain Check
+
+Apply this check after a candidate becomes a final HVU and before accepting the linked JSONL rows:
+
+1. Link check: the subchain links to exactly one final non-S00 HVU and covers that HVU's experiment-to-result route.
+2. Granularity check: use `concrete_execution_granularity` when localized source material provides code, notebook, script, path, variable, function, parameter, returned object, or saved output names; use `source_analysis_granularity` when the source only provides article-denoted analysis objects.
+3. Step transition check: each step records a source-backed object transition in `inputs -> call(parameters) -> outputs` order.
+4. Object continuity check: downstream inputs reuse the exact upstream output ID for the same logical object.
+5. Source-backed call check: calls and key parameters come from localized source material or source-denoted analysis descriptions.
+6. Result-bearing output check: the route reaches at least one output object, figure, table, or source result locator that can support the linked HVU result.
+7. Result bridge check: `result_extraction.observations[]` aligns with the linked HVU `result.observations[]`.
+8. Placement check: input structure, reference construction, model fitting, object export, plotting settings, and localization-readiness facts stay in steps, parameters, `source_ref`, `chain_manifest.yaml`, or locator support unless they are the result being evaluated.
+
+An execution step is a source-backed operation that changes the state of an evidence object. Typical steps include loading source data, preparing or filtering an object, constructing a model input, fitting or running a model, exporting a result-bearing object, applying a statistical test, ranking or filtering results, and generating a figure or table used for result extraction.
+
+Do not create separate steps for pure variable renaming, display styling, narrative interpretation, or code that does not create, transform, test, rank, or materialize an evidence object.
+
+Each execution subchain must write one or more `steps[]` entries in method-call
+order. Each step records object-level `inputs -> call(parameters) -> outputs`
+and `source_ref`. Inputs and outputs use lightweight objects with `id`,
+`object_content`, and `format`. `outputs` must contain at least one named result
+object. `inputs` may be empty only for source-loading, object-creation, or
+initialization steps without an upstream data object.
+
+Use object IDs as logical object identifiers within one submission or case.
+When a downstream step consumes a prior output, reuse the exact output object
+ID. The same object ID must refer to the same logical object throughout the
+chain; do not reuse one ID for different objects.
+
+Full code is not embedded in `execution_subchains.jsonl`. Use `source_ref` to
+record the local code, notebook, repository, script, documentation section,
+figure, or table location supporting the step. Do not write only narrative
+summaries such as "authors applied X."
+
+`result_extraction.observations[]` records the observations extracted from the route. These observations should align with the linked HVU `result.observations[]`. Use the same `observation/support/interpretation` shape. Unknown parameters are not fabricated; record all source-observed key parameters in `parameters`.
+
+### Execution Granularity
+
+Select one execution granularity per chain and record it in
+`chain_manifest.yaml`.
+
+Stage 4 evaluates each chain against its declared execution granularity.
+`source_analysis_granularity` does not require localized runtime-derived
+artifacts when publication source locators directly support the reported result.
+`concrete_execution_granularity` requires localized executable source and the
+required input-to-result route. Neither mode requires rerunning the analysis
+during independent confirmation.
+
+`source_analysis_granularity` is a source-backed analytical route using
+source-denoted objects. Inputs and outputs may be descriptive objects, such as
+data objects, result tables, figure panels, reported clusters, gene sets,
+regions, or analysis products named in the source. Each call must be a
+source-backed method, function, model, test, or analysis operation.
+
+`concrete_execution_granularity` is a code/workspace-backed route using
+variables, files, commands, code blocks, or stable object IDs tied to executable
+material. This is expected for tutorials, official examples, repositories,
+notebooks, scripts, or article cases where executable source material is
+available.
+
+For `concrete_execution_granularity`, use source-observed object names from
+localized code, notebooks, scripts, commands, file paths, variables, function
+calls, parameters, returned objects, or saved outputs. When localized source
+material only supports conceptual object descriptions, use
+`source_analysis_granularity`.
+
+Both granularities use the same
+`inputs -> call(parameters) -> outputs -> result_extraction` structure and must
+not reduce a source section to a narrative summary.
+
+Use the strongest granularity supported by the localized sources. Do not choose
+`concrete_execution_granularity` unless the localized source material ties the
+route to source-observed code or workspace object names. Do not write unresolved
+placeholders or inferred pseudo-objects into JSONL rows.
+
+## `chain_manifest.yaml` Template
+
+```yaml
+case_id:
+chain_id:
+chain_origin: case_derived
+chain_status: draft | needs_revision | comparison_ready | blocked
+chain_scope:
+  scientific_objective:
+  data_context:
+  dependency_summary:
+independent_check:
+  status: not_started | confirmed | needs_revision | blocked
+  reviewer_independence: independent_curator | self_review_with_limitation
+  checked_sources:
+    - source_id:
+      local_path:
+      source_role:
+      locator:
+  checked_data_objects:
+    - id:
+      role:
+      local_or_prepared_path:
+      artifact_refs:
+        - name:
+          role:
+          path_or_locator:
+      read_summary_used:
+  findings_summary:
+    blocking:
+      - "<blocking finding>"
+    needs_revision:
+      - "<revision finding>"
+    notes:
+      - "<note>"
+  notes_location: dual_chain/<chain_id>/independent_check.md
+source:
+  route: bioinformatics_tool_paper
+  source_type: paper_case_section | official_tutorial
+  tool:
+  paper_or_doc:
+  section_or_example:
+  link:
+  repository:
+
+source_manifest:
+case_data_manifest:
+used_localized_sources:
+  -
+used_data_objects:
+  - id: <case_data_manifest_data_object_id>
+    role: <role>
+    artifact_refs:
+      - name: <internal_artifact_or_object_name>
+        role: <artifact_role>
+        path_or_locator: <data-root-relative-path-or-source-locator>
+    required_by_scientific_units:
+      - S01
+    required_by_execution_subchains:
+      - E01
+
+data_readiness:
+  status: DATA_READY | BLOCKED_EXTERNAL | not_checked
+  required_data_objects_resolved: yes | no | not_checked
+  unresolved_data_objects:
+    -
+  notes:
+
+schema_check:
+  scientific_chain_schema: contracts/output_template/scientific_chain.jsonl
+  execution_subchain_schema: contracts/output_template/execution_subchains.jsonl
+  jsonl_extension_policy: no_extra_fields
+
+visibility:
+  agent_visible: no
+  evaluator_facing: yes
+  hidden_reference_candidate: yes
+
+extraction_policy:
+  construction_mode: hvu_execution_alternating
+  execution_route: ordered_multi_step_method_call_route
+  result_material: concrete_numeric_or_biological_analysis_content
+  scientific_unit_requirement: "Each non-framing HVU should have one primary execution subchain covering its experiment-to-result route."
+  execution_granularity: source_analysis_granularity | concrete_execution_granularity
+  minimum_execution_detail:
+    - data object type
+    - method or algorithm name
+    - function name when available
+    - key parameters when available
+    - output object or reported result
+
+provenance:
+  source_sections:
+    -
+  source_notebooks_or_scripts:
+    -
+  source_figures_or_tables:
+    -
+
+limitations:
+  -
+
+scientific_cautions:
+  - "Publication-derived chain is not ground truth."
+  - "Do not force agents to reproduce the publication path."
+  - "Separate computational observations from biological conclusions."
+  - "Avoid causal, clinical, or mechanistic overclaims unless the study design supports them."
+```
+
+## Minimal JSONL Examples
+
+These templates illustrate field roles and HVU/execution granularity. They serve
+as schema examples rather than source-specific task answers. Placeholder markers
+such as `<specific_target_object>`, `<observed_relationship_or_pattern>`,
+`<reported_value_or_named_pattern>`, and `<source_ref_locator>` are replaced
+with source-specific material before `comparison_ready`. If source-specific
+material cannot be located, keep `chain_status` below `comparison_ready`. Use
+reported integers when sample or spatial-unit counts are available; use `null`
+when those counts are unresolved.
+
+```jsonl
+{"scientific_unit_id":"S00","parent_units":[],"data_summary":{"organism":"<organism>","tissue":"<tissue_or_context>","data_types":["<data_type>"],"sample_count":null,"spatial_unit_count":null,"sample_structure":["<sample_or_replicate_structure>"],"grouping_variables":["<group_or_condition>"],"metadata_available":["<metadata_field>"],"notes":["<screening_or_source_limit>"]}}
+{"scientific_unit_id":"S01","parent_units":[],"hypothesis":"Evaluate <specific_target_object> with respect to <relationship_or_pattern_dimension> in <specific_context>.","experiment":{"summary":"<scientific_level_verification_or_analysis_experiment>.","execution_subchain_ids":["E01"]},"result":{"observations":[{"observation":"<specific_target_object> shows <observed_relationship_or_pattern> in <specific_context> with <reported_value_or_named_pattern>.","support":"<figure/table/notebook_output/local_object_locator>","interpretation":"This is <claim_strength> evidence within <case_limit>."}]},"conclusion":{"summary":"Within <case_limit>, the observations support a <claim_strength> claim that <specific_target_object> has <relationship> in <context>."},"next_hypothesis":"<next_source_supported_hypothesis_or_null>"}
+```
+
+```jsonl
+{"execution_subchain_id":"E01","linked_scientific_unit_id":"S01","steps":[{"step_id":"E01.1","inputs":[{"id":"<raw_or_prepared_input_object_id>","object_content":"<source_named_input_object_content>","format":"<format>"}],"call":"<source_named_loader_or_preprocessing_call>","parameters":{"<known_parameter>":"<source_value>"},"outputs":[{"id":"<prepared_object_id>","object_content":"<prepared_object_content>","format":"<format>"}],"source_ref":{"type":"<source_ref_type>","locator":"<source_ref_locator>"}},{"step_id":"E01.2","inputs":[{"id":"<prepared_object_id>","object_content":"<prepared_object_content>","format":"<format>"}],"call":"<source_named_analysis_call>","parameters":{"<known_parameter>":"<source_value>"},"outputs":[{"id":"<specific_result_object_id>","object_content":"<object_containing_reported_value_or_named_pattern>","format":"<table_figure_or_object_format>"}],"source_ref":{"type":"<source_ref_type>","locator":"<source_ref_locator>"}}],"result_extraction":{"observations":[{"observation":"<specific_target_object> shows <observed_relationship_or_pattern> in <specific_context> with <reported_value_or_named_pattern>.","support":"<specific_result_object_id_or_source_locator>","interpretation":"This is <claim_strength> evidence within <case_limit>."}]}}
+```

@@ -4,9 +4,15 @@
 
 - `overview/proposal.md`: project motivation, goals, and contribution boundary.
 - `overview/design-method.md`: top-level design navigation for dataset construction and benchmark framework discussions.
+- `overview/discussion-framework.md`: working discussion order for task units, reference anchors, dataset construction, contracts, benchmark conditions, evaluation, pilot cases, and scale-up.
 
 ## Datasets
 
+- [ST Source Screening Round 1](datasets/st-source-screening-round1.md)
+- [Tool / Method Case Extraction](datasets/tool-method-case-extraction.md):
+  ST tool/method paper and tutorial screening, source localization, case data
+  localization, and handoff to dual-chain extraction.
+- [Dual Chain Extraction](datasets/dual-chain-extraction.md): shared dual-chain framework for agent submissions and case-derived curation records.
 - `datasets/task-package.md`: task construction and reference anchor design.
 - `datasets/task-authoring.md`: task authoring workflow and reference isolation rules.
 - `datasets/data-contract.md`: NAS storage and run output contract.

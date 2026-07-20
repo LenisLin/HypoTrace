@@ -71,8 +71,9 @@ defines the shared scientific trace submission and evaluation layer above them.
 ## Fixed Decisions
 
 - Project name: HypoTrace.
-- Core structure: scientific chain as a sequence of hypothesis-verification
-  units.
+- Core structure: scientific chain as an `S00` study-framing record plus HVUs
+  with hypothesis, experiment, result observations, conclusion, and next
+  hypothesis.
 - Output constraint: shared skill, template, and prompt requirement.
 - Evaluation timing: post-hoc validation only.
 - Conditions: base model-harness, base plus easy bio skill, base plus bioharness.

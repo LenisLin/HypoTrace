@@ -2,8 +2,8 @@
   "reference_units": [
     {
       "unit_id": "RS01",
-      "question_or_hypothesis": "Can the synthetic table be summarized without making biological claims?",
-      "evidence_need": ["valid summary artifact"],
+      "hypothesis": "The synthetic table can be summarized without making biological claims.",
+      "required_evidence": ["valid summary artifact"],
       "acceptable_method_families": ["descriptive statistics"]
     }
   ]

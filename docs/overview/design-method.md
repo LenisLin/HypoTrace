@@ -12,6 +12,8 @@ Dataset sources are fixed to four source routes:
 - `bioinformatics tool paper`
 - `biomedical analysis paper`
 
+The detailed discussion sequence is tracked in `discussion-framework.md`. It starts from the task object or evaluation unit before dataset registry, runner, or evaluator implementation details.
+
 Each later design discussion should follow the same progression:
 
 ```text
