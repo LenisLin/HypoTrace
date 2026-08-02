@@ -5,10 +5,18 @@ strict validation pass. They do not perform JSONL line handling, cross-file
 link checks, artifact path checks, task registry checks, or scientific validity
 assessment.
 
-Full validation will be implemented in the schema-validation phase. That work
-must add JSONL line validation, cross-file link checks, artifact path checks,
-and task registry/NAS bundle checks before these schemas are used for primary
-scoring.
+`stomicsdb_dual_chain_job.schema.json` and
+`stomicsdb_dual_chain_manifest.schema.json`, and
+`stomicsdb_dual_chain_job_response.schema.json` are consumed by the STOmicsDB
+dual-chain coordinator. They validate local assignment/manifest/response shape; the
+coordinator separately owns manifest hashes, candidate membership, Dxx/Axx
+subsets, cross-file links, object continuity, and publication state.
+
+The STOmicsDB coordinator already implements JSONL line validation, cross-file
+links, artifact binding, resume state, and atomic publication checks for this
+curation route. These checks establish contract compliance, not scientific
+truth or primary benchmark scoring. Other general submission schemas in this
+directory may still require their own consumer-side validation.
 
 The first strict schema pass should validate only fields required for the primary
 endpoints:

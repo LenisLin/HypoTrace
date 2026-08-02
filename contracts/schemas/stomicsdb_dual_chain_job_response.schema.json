@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hypotrace.local/schemas/stomicsdb_dual_chain_job_response.schema.json",
+  "title": "STOmicsDB dual-chain candidate job response",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["stomicsdb_dual_chain_job_response"],
+  "properties": {
+    "stomicsdb_dual_chain_job_response": {"$ref": "#/$defs/response"}
+  },
+  "$defs": {
+    "safe_id": {"type": "string", "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"},
+    "stds_id": {"type": "string", "pattern": "^STDS[0-9]{7}$"},
+    "candidate_id": {"type": "string", "pattern": "^C[0-9]{2,}$"},
+    "chain_id": {"type": "string", "pattern": "^chain_sha256_[0-9a-f]{16}$"},
+    "nullable_absolute_path": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "string", "pattern": "^/[^\\u0000]+$"}
+      ]
+    },
+    "output_paths": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["chain_directory", "chain_manifest", "scientific_chain", "execution_subchains", "independent_check"],
+      "properties": {
+        "chain_directory": {"$ref": "#/$defs/nullable_absolute_path"},
+        "chain_manifest": {"$ref": "#/$defs/nullable_absolute_path"},
+        "scientific_chain": {"$ref": "#/$defs/nullable_absolute_path"},
+        "execution_subchains": {"$ref": "#/$defs/nullable_absolute_path"},
+        "independent_check": {"$ref": "#/$defs/nullable_absolute_path"}
+      }
+    },
+    "response": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["attempt_id", "job_attempt_id", "stds_id", "candidate_id", "chain_id", "status", "revision_rounds", "review_rounds", "output_paths", "error"],
+      "properties": {
+        "attempt_id": {"type": "string", "maxLength": 80, "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"},
+        "job_attempt_id": {"type": "string", "maxLength": 112, "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"},
+        "stds_id": {"$ref": "#/$defs/stds_id"},
+        "candidate_id": {"$ref": "#/$defs/candidate_id"},
+        "chain_id": {"$ref": "#/$defs/chain_id"},
+        "status": {"type": "string", "enum": ["comparison_ready", "specification_ready", "blocked", "round3_handoff_needs_revision", "failed"]},
+        "revision_rounds": {"type": "integer", "minimum": 0, "maximum": 2},
+        "review_rounds": {"type": "integer", "minimum": 0, "maximum": 3},
+        "output_paths": {"$ref": "#/$defs/output_paths"},
+        "error": {"type": ["string", "null"], "minLength": 1}
+      }
+    }
+  }
+}
