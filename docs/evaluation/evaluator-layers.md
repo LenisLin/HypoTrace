@@ -89,11 +89,13 @@ Runtime-only metrics such as execution completion and code provenance coverage
 are computed from agent-run extensions or logs. They must not require `status`
 or `code_path` fields inside shared-core `execution_subchains.jsonl`.
 
-## Layer 4: Reference Alignment
+## Layer 4: Non-Exclusive Reference Diagnostics
 
-Reference alignment does not require exact path matching. It compares agent
-HVUs, execution subchains, and claims against reference chokepoints, acceptable
-method families, and claim surfaces.
+Case-derived human chains record observed analysis choices rather than required
+paths. Reference diagnostics may compare agent HVUs, execution subchains, and
+claims against non-exclusive analysis anchors, acceptable method families, and
+claim surfaces. They must not treat failure to reproduce a publication route as
+scientific failure when the agent provides a valid alternative analysis.
 
 Supported matcher classes may include rule-based matching, controlled vocabulary
 matching, embedding similarity, fixed-rubric LLM judging, and expert audit
@@ -105,6 +107,9 @@ Metrics:
 - Critical Chokepoint Recall.
 - Chokepoint Precision.
 - Chokepoint F1.
+
+These metrics are diagnostic. They are not the primary scientific-quality score
+for open-ended tasks.
 
 ## Layer 5: Claim Quality
 
@@ -126,6 +131,31 @@ Typical overclaims:
 - Marker expression to definitive cell identity.
 - Correlation to mechanism.
 
+## Layer 6: Anonymous Human-Relative Ranking
+
+For each task, the evaluator combines rendered human analysis results with the
+rendered results from evaluated model-harness conditions. Candidates receive
+random identifiers, use the same HVU presentation, and are ranked without
+source identity.
+
+Ranking criteria:
+
+- alignment with the scientific question;
+- appropriateness of the selected methods for the data;
+- traceability from execution and artifacts to observations;
+- handling of uncertainty, robustness, and plausible alternatives;
+- proportionality of conclusions to the available evidence.
+
+Judges rank scientific quality, not perceived human authorship. Source identity
+is revealed only after judgments are fixed. Pairwise judgments may be aggregated
+with Bradley-Terry or Plackett-Luce models. Reports should include judge
+agreement, task-level uncertainty, human-relative preference, and
+baseline-agent-relative preference.
+
+Automated fixed-prompt judges support reproducible development evaluation. Their
+rankings require calibration against an independent expert subset before they
+serve as an official scientific comparison.
+
 ## Score Report Groups
 
 `score_report.json` should group metrics into:
@@ -136,6 +166,7 @@ Typical overclaims:
 - coupling metrics.
 - reference alignment.
 - claim metrics.
+- anonymous ranking and human-relative comparison.
 
 ## Context Metrics
 
@@ -151,9 +182,11 @@ First-pass context metrics should use values reliably extractable from logs:
 If a harness does not expose token usage, the value should be recorded as
 missing rather than estimated.
 
-## Companion Ranking
+## Interpretation Boundary
 
-Subjective ranking is a companion evaluation. Annotation packets can support
-blind pairwise comparison of scientific chain quality, execution chain quality,
-and final report quality. Aggregation may use Bradley-Terry, Elo, majority vote,
-or inter-rater agreement.
+Schema, artifact, and coupling metrics establish compliance and evidence
+integrity. They do not by themselves establish overall scientific quality.
+Anonymous ranking is the primary comparative endpoint for open-ended tasks, but
+it estimates relative preference under a specified task set, anchor pool,
+renderer, and judge configuration. It is not an absolute correctness score and
+does not make the human candidate ground truth.

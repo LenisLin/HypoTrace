@@ -11,10 +11,20 @@
 - [ST Source Screening Round 1](datasets/st-source-screening-round1.md)
 - [Public-Data Research Case Extraction](datasets/public-data-research-case-extraction.md):
   article-anchored public-database research cases and their data-access boundary.
+- [STOmicsDB Localization Workflow](datasets/stomicsdb-localization-workflow.md):
+  canonical Round 1 source localization, effective-intake amendments, Round 1.5
+  logical-bundle and file-level acquisition planning, implemented
+  operator-started Round 2A background download, and Round 2B structural
+  localization contract.
+- [STOmicsDB Case Construction Workflow](datasets/stomicsdb-case-construction-workflow.md):
+  canonical Round 3 dataset-scoped case construction: five-job implementation
+  windows, one dataset worker per dataset-local article, bounded
+  literature/search/audit roles, and exactly three accepted output files.
 - [Tool / Method Case Extraction](datasets/tool-method-case-extraction.md):
   ST tool/method paper and tutorial screening, source localization, case data
   localization, and handoff to dual-chain extraction.
 - [Dual Chain Extraction](datasets/dual-chain-extraction.md): shared dual-chain framework for agent submissions and case-derived curation records.
+- [STOmicsDB Dual-Chain Workflow](datasets/stomicsdb-dual-chain-workflow.md): lightweight per-candidate preflight, extraction, independent review, bounded repair, and terminal response validation.
 - `datasets/task-package.md`: task construction and reference anchor design.
 - `datasets/task-authoring.md`: task authoring workflow and reference isolation rules.
 - `datasets/data-contract.md`: NAS storage and run output contract.
@@ -35,7 +45,8 @@
 
 ## Evaluation
 
-- `evaluation/evaluation-metrics.md`: objective metrics and companion ranking.
+- `evaluation/evaluation-metrics.md`: integrity diagnostics, anonymous ranking,
+  and human-relative comparison endpoints.
 - `evaluation/evaluator-layers.md`: post-hoc evaluator layers and metric outputs.
 - `evaluation/scientific-validity.md`: validity, bias, statistics, and overclaim controls.
 
@@ -52,7 +63,8 @@
 - Runner code must not provide real-time format correction to agents.
 - Hidden references must not enter the agent workspace.
 - Bioharness conditions must not auto-fill HypoTrace scientific chains.
-- LLM or expert ranking must not be the only primary score.
+- Anonymous ranking is the primary comparative endpoint for open-ended tasks and
+  must be accompanied by execution-integrity diagnostics and expert calibration.
 - Git `tasks/` entries must not contain hidden references or truth files.
 - Experiment configs must not redefine the shared submission contract.
 - Task sets select tasks; they do not duplicate task bundles.

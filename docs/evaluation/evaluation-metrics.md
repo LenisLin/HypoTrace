@@ -1,10 +1,17 @@
 # Evaluation Metrics
 
 HypoTrace metrics are organized around scientific hypotheses rather than a single
-large total score. The first implementation should provide a dashboard and a
-small number of primary endpoints.
+large total score. The first implementation should distinguish comparative
+scientific-quality endpoints from protocol and evidence-integrity diagnostics.
 
-Primary endpoints for the first real benchmark should be limited to:
+Primary comparative endpoints for open-ended tasks should be limited to:
+
+- Human-Relative Preference Probability.
+- Baseline-Agent-Relative Preference Probability.
+- Judge Agreement.
+- Task-Level Ranking Uncertainty.
+
+The first integrity dashboard should report:
 
 - Trace Parseability.
 - HVU Completeness.
@@ -14,8 +21,10 @@ Primary endpoints for the first real benchmark should be limited to:
 - Evidence-Backed Claim Rate.
 - Overclaim Rate.
 
-Other metrics are exploratory until their extraction logic, missing-data
-behavior, and failure modes are specified and tested.
+Integrity metrics constrain interpretation of a ranked result; they are not a
+substitute for scientific-quality comparison. Other metrics are exploratory
+until their extraction logic, missing-data behavior, and failure modes are
+specified and tested.
 
 ## Descriptive Metrics
 
@@ -65,8 +74,9 @@ logs, not to the shared case-derived execution core.
 
 ## Reference Alignment
 
-Reference alignment should not require reproducing the publication path. It
-should evaluate coverage of critical analysis logic.
+Reference alignment is a non-exclusive diagnostic. It should not require
+reproducing a publication path or penalize a valid alternative analysis. A
+case-derived human chain records an observed human choice, not the answer key.
 
 - Critical Chokepoint Recall.
 - Chokepoint Precision.
@@ -94,9 +104,23 @@ Example evidence vector dimensions:
 - Trace Compression Ratio: final trace tokens divided by raw transcript tokens.
 - Context Efficiency: primary quality score divided by total input tokens.
 
-## Companion Ranking
+## Anonymous Human-Relative Ranking
 
-For open research questions, retain blind pairwise expert ranking as companion
-evaluation. Ranking prompts should separately judge scientific chain quality,
-execution chain quality, and final report quality. Aggregation can use
-Bradley-Terry or Elo-style models with expert agreement analysis.
+For each task, mix human and agent results in one anonymized candidate pool.
+Ranking prompts should judge scientific question alignment, method-data fit,
+evidence traceability, robustness, and conclusion scope without asking judges to
+identify the source. Reveal candidate identities only after ranking.
+
+- Human-Relative Preference Probability: estimated probability that an agent
+  result is preferred to the human anchor for the same task.
+- Baseline-Agent-Relative Preference Probability: estimated probability that a
+  new result is preferred to a frozen baseline-agent result.
+- Judge Agreement: agreement across blinded judges before aggregation.
+- Task-Level Ranking Uncertainty: uncertainty estimated with the task as the
+  aggregation unit.
+
+Pairwise judgments may be aggregated with Bradley-Terry or Plackett-Luce models.
+A reported score must identify the benchmark version, task set, anchor pool,
+anonymization renderer, judge configuration, and aggregation method. The score
+is relative to that evaluation context and does not estimate absolute scientific
+correctness.

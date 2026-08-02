@@ -10,6 +10,7 @@ registry templates, schema placeholders, and shared submission requirements.
 contracts/
   HYPO_TRACE_SKILL.md
   output_template/
+  checklists/
   submission_contract.yaml
   config_templates/
   task_registry_template/
@@ -40,6 +41,56 @@ curator or evaluator-facing prompts and must not be copied into agent
 workspaces.
 
 Current curation prompts:
+
+STOmicsDB public-database curation prompts:
+
+- `prompts/curation/stomicsdb_round1_article_localization.md`: localize one
+  DOI-deduplicated paper and linked STDS article packages for Round 1.
+- `prompts/curation/stomicsdb_round1_resource_selection.md`: perform
+  metadata-only resource selection for Round 1.5 logical bundles.
+- `prompts/curation/stomicsdb_round15_acquisition_plan.md`: materialize the
+  two-column Round 1.5 acquisition plan from effective-intake-approved bundles.
+- `prompts/curation/stomicsdb_round2b_bundle_validation.md`: validate one
+  approved bundle structurally after Round 2A without scientific analysis or
+  case admission.
+
+Round 3 uses the five-prompt family under
+`prompts/curation/stomicsdb/round3/`: `implementation_window.md`,
+`dataset_worker.md`, `article_reader.md`, `resource_access_researcher.md`, and
+`case_reviewer.md`. The standalone review authority is
+`checklists/stomicsdb/round3/case_review.md`; the sole accepted-field authority
+is `output_template/stomicsdb/round3/case_outputs.md`. The dataset worker is the
+only formal writer. Leaf roles return fixed evidence, and the reviewer returns
+findings for at most two rounds.
+
+STOmicsDB dual-chain construction uses the lightweight candidate controller at
+`prompts/curation/stomicsdb/dual_chain/candidate_job.md`, the output contract at
+`output_template/stomicsdb/dual_chain/outputs.md`, and the operational workflow
+at `docs/datasets/stomicsdb-dual-chain-workflow.md`. It reuses the shared
+scientific/execution JSONL schemas and adds only strict job-assignment and chain
+manifest schemas plus a small terminal job-response schema.
+
+STOmicsDB dispatch prompts:
+
+- `prompts/curation/dispatch_stomicsdb_round1_article_worker.md`
+- `prompts/curation/dispatch_stomicsdb_round1_batch.md`
+- `prompts/curation/dispatch_stomicsdb_round1_resource_selection_worker.md`
+- `prompts/curation/dispatch_stomicsdb_round1_resource_selection_batch.md`
+- `prompts/curation/dispatch_stomicsdb_round2b_bundle_worker.md`
+- `prompts/curation/dispatch_stomicsdb_round2b_batch.md`
+
+The STOmicsDB contracts are synchronized through effective-intake-aware Round
+1.5 planning, Round 2B structural localization, and the active Round 3
+dataset-scoped case contract. Each Round 3 candidate is one public-data
+dual-chain dispatch scope. The dual-chain prompts select `case_route:
+tool_method | public_database_stomicsdb`; the public route consumes the
+canonical three-file case directly and does not require the tool/method
+screening layout. Task admission, hidden references, and benchmark evaluation
+remain downstream.
+`scripts/stomicsdb_round2_download.py` implements the operator-started Round 2A
+transfer capability. `scripts/start_stomicsdb_round2_download.sh` validates the
+plan and starts that downloader under `nohup` only when an operator invokes the
+launcher; publishing a plan or script never starts it automatically.
 
 All tool/method curation prompts write under
 `raw_data/tool_method/<method_slug>/` and should not create the legacy split

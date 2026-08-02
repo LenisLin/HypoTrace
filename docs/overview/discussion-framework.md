@@ -9,7 +9,11 @@ documents.
 ST round 1 starts from source-route screening, not from task levels, schemas,
 benchmark conditions, or evaluator design. The current public-data route starts
 with STOmicsDB/STDS and is defined in [Public-Data Research Case
-Extraction](../datasets/public-data-research-case-extraction.md).
+Extraction](../datasets/public-data-research-case-extraction.md). Its executable
+localization procedure is defined in [STOmicsDB Localization
+Workflow](../datasets/stomicsdb-localization-workflow.md), and admitted public
+case construction is defined in [STOmicsDB Case Construction
+Workflow](../datasets/stomicsdb-case-construction-workflow.md).
 
 ## Discussion Order
 
@@ -40,11 +44,26 @@ Extraction](../datasets/public-data-research-case-extraction.md).
 - [Public-Data Research Case
   Extraction](../datasets/public-data-research-case-extraction.md): public-data
   research-case route and source boundary.
+- [STOmicsDB Localization
+  Workflow](../datasets/stomicsdb-localization-workflow.md): canonical Round 1
+  localization, Round 1.5 acquisition planning, operator-started Round 2A
+  download, and Round 2B structural localization contract.
+- [STOmicsDB Case Construction
+  Workflow](../datasets/stomicsdb-case-construction-workflow.md): executable
+  Round 3 public-case construction workflow.
 - [Tool / Method Case Extraction](../datasets/tool-method-case-extraction.md):
   tool- and method-paper route.
 - [Dual Chain Extraction](../datasets/dual-chain-extraction.md): shared
   case-derived chain procedure.
 - [Data Contract](../datasets/data-contract.md): NAS and localization boundary.
+
+The public-data discussion is specified through the Round 1.5 file-level
+acquisition plan, the operator-started Round 2A download interface, Round 2B
+structural localization, and Round 3 dataset-scoped case construction. Download
+and structural localization remain transport and object-structure evidence
+only.
+`scripts/stomicsdb_round2_download.py` implements the operator-started transfer
+interface; no formal download starts without explicit operator action.
 
 ## Deferred Topics
 
@@ -53,7 +72,15 @@ The following topics are intentionally deferred until concrete ST examples are s
 - final task object schema and Level 1/2/3 assignment;
 - task truncation, reference-anchor, and trace-granularity rules;
 - evaluator layers, benchmark scoring, and pilot packaging;
-- detailed public-data manifests, statuses, and executable procedures.
+- durable automated Round 2B validation and a production Round 3 runner;
+- canonical production publication, dual-chain construction, task admission,
+  hidden references, and benchmark evaluation.
+
+Round 3 uses five role-specific prompts: an implementation window, dataset
+worker, article reader, resource-access researcher, and case reviewer. The
+standalone review checklist and nested case-output template are the current
+review and output authorities. The retired per-edge hierarchy and a generic
+role-parameterized helper are not execution routes.
 
 ## External References To Review
 

@@ -1,19 +1,28 @@
 # HypoTrace
 
-HypoTrace is a benchmark protocol for evaluating bioinformatics agents through
-hypothesis-to-evidence traces. Instead of scoring only final answers or
-unconstrained trajectories, HypoTrace requires each agent to submit a structured
-scientific chain. Each scientific unit follows a hypothesis-verification
-structure: an `S00` study-framing record followed by hypothesis-verification
-units with a hypothesis, verification experiment, linked execution subchain,
-result, bounded scientific conclusion, and optional next hypothesis.
+HypoTrace is being developed as an executable scientific-agent evaluation
+harness for open-ended bioinformatics analysis. Its benchmark suites are
+designed as versioned workloads that provide scientific questions, task data,
+runtime conditions, human analysis anchors, baseline-agent runs, and evaluator
+configurations. The harness defines a common execution and evidence-capture
+boundary so that different agents can choose different valid methods while
+remaining comparable.
+
+Instead of scoring only final answers or treating one extracted analysis as the
+required path, HypoTrace represents each completed analysis as a structured
+scientific chain. Each chain contains an `S00` study-framing record followed by
+hypothesis-verification units with a hypothesis, verification experiment, linked
+execution subchain, result, bounded scientific conclusion, and optional next
+hypothesis.
 
 The goal is to evaluate whether an agent can convert biological data analysis
-into evidence-grounded scientific conclusions. HypoTrace is not a new
-bioinformatics harness or method library. It is a common output and evaluation
-protocol applied uniformly to different model-harness conditions, including base
-coding agents, base agents with lightweight bioinformatics skills, and base
-agents equipped with state-aware bioharnesses such as ChatSpatial or OmicOS.
+into evidence-grounded scientific conclusions under a shared runtime and output
+contract. Human and agent analyses can be anonymized and ranked together for
+scientific quality; human choices are comparison anchors, not ground-truth
+answers. HypoTrace is not a general bioinformatics tool library or a replacement
+for execution substrates such as ChatSpatial or OmicOS. Those systems, base
+coding agents, and agents with lightweight bioinformatics skills are conditions
+that can run inside the HypoTrace evaluation harness.
 
 ## Repository Roots
 
@@ -61,6 +70,14 @@ The mutable queues and aggregate state are maintained under
 chain directories may remain on NAS as provenance even when a case is not in
 the active queue.
 
+## Current STOmicsDB Public-Data Snapshot
+
+The active STOmicsDB public-data research scope is frozen to 16 STDS records.
+The authoritative ordered allowlist is defined in
+`docs/datasets/public-data-research-case-extraction.md`. STOmicsDB intake,
+dispatch, case construction, and downstream extraction must use only that
+allowlist.
+
 ## Documentation
 
 Start with:
@@ -75,6 +92,8 @@ Topic areas:
 - `docs/datasets/task-package.md`
 - `docs/datasets/task-authoring.md`
 - `docs/datasets/data-contract.md`
+- `docs/datasets/stomicsdb-localization-workflow.md`
+- `docs/datasets/stomicsdb-case-construction-workflow.md`
 - `docs/benchmark/benchmark-design.md`
 - `docs/benchmark/experimental-design.md`
 - `docs/benchmark/hypotrace-protocol.md`
@@ -97,7 +116,6 @@ tasks/             Lightweight Git task registry entries, not full task bundles
 configs/           Deprecated top-level pointer; real configs live under experiments or contracts
 scripts/           CLI wrappers for data preparation, runs, validation, and reports
 docs/              Themed design documentation for overview, datasets, benchmark, workflow, and evaluation
-examples/          Toy task and dry-run examples
 tests/             Contract tests for the protocol skeleton
 ```
 
