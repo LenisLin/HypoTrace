@@ -1,6 +1,0 @@
-agent_id: placeholder-agent
-provider: local
-model: dry-run
-temperature: 0
-max_turns: 1
-system_prompt: contracts/prompts/system/default.md

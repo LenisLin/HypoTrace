@@ -72,9 +72,10 @@ available, and run metadata. Missing token usage should be recorded as missing.
 `eval/` stores evaluator outputs. These files are produced after the run and are
 not part of the agent submission.
 
-## Annotation Packets
+## Anonymous Ranking Packets
 
-Companion ranking packets should be exported separately, for example:
+Ranking packets should be exported separately from identity-bearing run
+metadata, for example:
 
 ```text
 annotation_packets/<task_id>/<pair_id>/
@@ -87,5 +88,7 @@ annotation_packets/<task_id>/<pair_id>/
   rubric.md
 ```
 
-The packet generator should support blind pairwise ranking and keep subjective
-ranking separate from objective score reports.
+The packet generator should support blind pairwise ranking through the same HVU
+renderer for human and agent candidates. It should keep source identity hidden
+until judgments are fixed and report ranking alongside, but not in place of,
+objective integrity diagnostics.

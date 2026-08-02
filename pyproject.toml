@@ -14,10 +14,8 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=8",
+    "jsonschema>=4",
 ]
-
-[project.scripts]
-hypotrace = "hypotrace.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["hypotrace*"]

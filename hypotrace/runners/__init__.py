@@ -1,1 +1,1 @@
-"""Runner interfaces and dry-run implementation."""
+"""Package reserved for future benchmark runner implementations."""

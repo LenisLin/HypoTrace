@@ -1,0 +1,518 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hypotrace.local/schemas/stomicsdb_dual_chain_manifest.schema.json",
+  "title": "STOmicsDB case-derived dual-chain manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "case_id",
+    "chain_id",
+    "case_route",
+    "chain_origin",
+    "input_binding",
+    "chain_status",
+    "chain_scope",
+    "independent_check",
+    "source",
+    "source_manifest",
+    "case_data_manifest",
+    "used_localized_sources",
+    "used_data_objects",
+    "used_auxiliary_resources",
+    "data_readiness",
+    "schema_check",
+    "visibility",
+    "extraction_policy",
+    "provenance",
+    "limitations",
+    "scientific_cautions"
+  ],
+  "properties": {
+    "case_id": {"type": "string", "pattern": "^stomicsdb_STDS[0-9]{7}$"},
+    "chain_id": {"$ref": "#/$defs/chain_id"},
+    "case_route": {"const": "public_database_stomicsdb"},
+    "chain_origin": {"const": "case_derived"},
+    "input_binding": {"$ref": "#/$defs/input_binding"},
+    "chain_status": {
+      "type": "string",
+      "enum": ["draft", "needs_revision", "comparison_ready", "specification_ready", "blocked"]
+    },
+    "chain_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scientific_objective", "data_context", "dependency_summary"],
+      "properties": {
+        "scientific_objective": {"$ref": "#/$defs/nonempty_string"},
+        "data_context": {"$ref": "#/$defs/nonempty_string"},
+        "dependency_summary": {"$ref": "#/$defs/nonempty_string"}
+      }
+    },
+    "independent_check": {"$ref": "#/$defs/independent_check"},
+    "source": {"$ref": "#/$defs/source"},
+    "source_manifest": {"$ref": "#/$defs/relative_path"},
+    "case_data_manifest": {"$ref": "#/$defs/relative_path"},
+    "used_localized_sources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "oneOf": [
+          {"$ref": "#/$defs/relative_path"},
+          {"$ref": "#/$defs/localized_source"}
+        ]
+      }
+    },
+    "used_data_objects": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/used_data_object"}
+    },
+    "used_auxiliary_resources": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/used_auxiliary_resource"}
+    },
+    "round3_result_bindings": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/round3_result_binding"}
+    },
+    "data_readiness": {"$ref": "#/$defs/data_readiness"},
+    "schema_check": {"$ref": "#/$defs/schema_check"},
+    "visibility": {"$ref": "#/$defs/visibility"},
+    "extraction_policy": {"$ref": "#/$defs/extraction_policy"},
+    "provenance": {"$ref": "#/$defs/provenance"},
+    "limitations": {"$ref": "#/$defs/string_list"},
+    "scientific_cautions": {"$ref": "#/$defs/string_list"}
+  },
+  "$defs": {
+    "nonempty_string": {"type": "string", "minLength": 1, "pattern": "^[\\s\\S]*\\S[\\s\\S]*$"},
+    "string_list": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/nonempty_string"}
+    },
+    "stds_id": {"type": "string", "pattern": "^STDS[0-9]{7}$"},
+    "candidate_id": {"type": "string", "pattern": "^C[0-9]{2,}$"},
+    "chain_id": {"type": "string", "pattern": "^chain_sha256_[0-9a-f]{16}$"},
+    "scientific_unit_id": {"type": "string", "pattern": "^S[0-9]{2,}$"},
+    "execution_id": {"type": "string", "pattern": "^E[0-9]{2,}$"},
+    "result_id": {"type": "string", "pattern": "^R[0-9]{2,}$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "relative_path": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[^\\u0000]+$"
+    },
+    "manifest_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "sha256"],
+      "properties": {
+        "path": {"$ref": "#/$defs/relative_path"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "input_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["stds_id", "candidate_id", "case_manifest", "source_manifest", "case_data_manifest"],
+      "properties": {
+        "stds_id": {"$ref": "#/$defs/stds_id"},
+        "candidate_id": {"$ref": "#/$defs/candidate_id"},
+        "case_manifest": {"$ref": "#/$defs/manifest_binding"},
+        "source_manifest": {"$ref": "#/$defs/manifest_binding"},
+        "case_data_manifest": {"$ref": "#/$defs/manifest_binding"}
+      }
+    },
+    "artifact_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "role", "path_or_locator"],
+      "properties": {
+        "name": {"$ref": "#/$defs/nonempty_string"},
+        "role": {"$ref": "#/$defs/nonempty_string"},
+        "path_or_locator": {"$ref": "#/$defs/nonempty_string"}
+      }
+    },
+    "auxiliary_artifact_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "path", "sha256"],
+      "properties": {
+        "artifact_id": {"$ref": "#/$defs/nonempty_string"},
+        "path": {"$ref": "#/$defs/relative_path"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "package_manifest_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["package_id", "path", "sha256", "generation_id"],
+      "properties": {
+        "package_id": {"$ref": "#/$defs/nonempty_string"},
+        "path": {"$ref": "#/$defs/relative_path"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "generation_id": {"$ref": "#/$defs/nonempty_string"}
+      }
+    },
+    "used_data_object": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "role", "artifact_refs", "required_by_scientific_units", "required_by_execution_subchains"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^D[0-9]{2,}$"},
+        "role": {"$ref": "#/$defs/nonempty_string"},
+        "artifact_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/artifact_ref"}
+        },
+        "required_by_scientific_units": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/scientific_unit_id"}
+        },
+        "required_by_execution_subchains": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/execution_id"}
+        }
+      }
+    },
+    "used_auxiliary_resource": {
+      "oneOf": [
+        {"$ref": "#/$defs/localized_used_auxiliary_resource"},
+        {"$ref": "#/$defs/external_used_auxiliary_resource"}
+      ]
+    },
+    "localized_used_auxiliary_resource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "canonical_resource_id",
+        "package_id",
+        "role",
+        "localization_binding",
+        "artifact_refs",
+        "required_by_scientific_units",
+        "required_by_execution_subchains"
+      ],
+      "properties": {
+        "id": {"type": "string", "pattern": "^A[0-9]{2,}$"},
+        "canonical_resource_id": {"$ref": "#/$defs/nonempty_string"},
+        "package_id": {"$ref": "#/$defs/nonempty_string"},
+        "role": {"$ref": "#/$defs/nonempty_string"},
+        "localization_binding": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["package_manifest"],
+          "properties": {
+            "package_manifest": {"$ref": "#/$defs/package_manifest_binding"}
+          }
+        },
+        "artifact_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/auxiliary_artifact_ref"}
+        },
+        "required_by_scientific_units": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/scientific_unit_id"}
+        },
+        "required_by_execution_subchains": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/execution_id"}
+        }
+      }
+    },
+    "external_used_auxiliary_resource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "role",
+        "resource_name",
+        "expected_content",
+        "source_url",
+        "access_classification",
+        "local_availability",
+        "access_notes",
+        "required_by_scientific_units",
+        "required_by_execution_subchains"
+      ],
+      "properties": {
+        "id": {"type": "string", "pattern": "^A[0-9]{2,}$"},
+        "role": {"$ref": "#/$defs/nonempty_string"},
+        "resource_name": {"$ref": "#/$defs/nonempty_string"},
+        "expected_content": {"$ref": "#/$defs/nonempty_string"},
+        "source_url": {"$ref": "#/$defs/nonempty_string"},
+        "access_classification": {"$ref": "#/$defs/nonempty_string"},
+        "local_availability": {"const": "absent"},
+        "access_notes": {"$ref": "#/$defs/nonempty_string"},
+        "required_by_scientific_units": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/scientific_unit_id"}
+        },
+        "required_by_execution_subchains": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/execution_id"}
+        }
+      }
+    },
+    "round3_result_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["result_id", "scientific_unit_ids", "execution_subchain_ids"],
+      "properties": {
+        "result_id": {"$ref": "#/$defs/result_id"},
+        "scientific_unit_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/scientific_unit_id"}
+        },
+        "execution_subchain_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/execution_id"}
+        }
+      }
+    },
+    "checked_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "local_path", "source_role", "locator"],
+      "properties": {
+        "source_id": {"$ref": "#/$defs/nonempty_string"},
+        "local_path": {"$ref": "#/$defs/relative_path"},
+        "source_role": {"$ref": "#/$defs/nonempty_string"},
+        "locator": {"$ref": "#/$defs/nonempty_string"}
+      }
+    },
+    "checked_data_object": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "role", "local_or_prepared_path", "artifact_refs", "read_summary_used"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[DA][0-9]{2,}$"},
+        "role": {"$ref": "#/$defs/nonempty_string"},
+        "local_or_prepared_path": {"$ref": "#/$defs/relative_path"},
+        "artifact_refs": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/artifact_ref"}
+        },
+        "read_summary_used": {"$ref": "#/$defs/nonempty_string"}
+      }
+    },
+    "independent_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "reviewer_independence", "checked_sources", "checked_data_objects", "findings_summary", "notes_location"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["not_started", "confirmed", "needs_revision", "blocked"]
+        },
+        "reviewer_independence": {
+          "type": "string",
+          "enum": ["independent_curator", "self_review_with_limitation"]
+        },
+        "checked_sources": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/checked_source"}
+        },
+        "checked_data_objects": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/checked_data_object"}
+        },
+        "checked_unresolved_auxiliary_resource_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^A[0-9]{2,}$"}
+        },
+        "findings_summary": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["blocking", "needs_revision", "notes"],
+          "properties": {
+            "blocking": {"$ref": "#/$defs/string_list"},
+            "needs_revision": {"$ref": "#/$defs/string_list"},
+            "notes": {"$ref": "#/$defs/string_list"}
+          }
+        },
+        "notes_location": {"$ref": "#/$defs/relative_path"}
+        ,"revision_scope": {
+          "type": ["string", "null"],
+          "enum": ["extraction", "round3_handoff", null]
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["route", "source_type", "paper_or_doc", "section_or_example"],
+      "properties": {
+        "route": {"const": "public_database_stomicsdb"},
+        "source_type": {
+          "type": "string",
+          "enum": ["paper_case_section", "official_tutorial"]
+        },
+        "tool": {"type": "null"},
+        "paper_or_doc": {"$ref": "#/$defs/nonempty_string"},
+        "section_or_example": {"$ref": "#/$defs/nonempty_string"},
+        "link": {"type": ["string", "null"]},
+        "repository": {"type": ["string", "null"]}
+      }
+    },
+    "localized_source": {
+      "oneOf": [
+        {"$ref": "#/$defs/localized_source_record"},
+        {"$ref": "#/$defs/localized_source_binding"}
+      ]
+    },
+    "localized_source_record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_id", "local_path", "source_role"],
+      "properties": {
+        "source_id": {"$ref": "#/$defs/nonempty_string"},
+        "local_path": {"$ref": "#/$defs/relative_path"},
+        "source_role": {"$ref": "#/$defs/nonempty_string"},
+        "locator": {"$ref": "#/$defs/nonempty_string"},
+        "locators": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/nonempty_string"}
+        }
+      }
+    },
+    "localized_source_binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "path", "sha256", "used_for"],
+      "properties": {
+        "id": {"$ref": "#/$defs/nonempty_string"},
+        "path": {"$ref": "#/$defs/relative_path"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "used_for": {"$ref": "#/$defs/nonempty_string"}
+      }
+    },
+    "data_readiness": {
+      "oneOf": [
+        {"$ref": "#/$defs/data_ready"},
+        {"$ref": "#/$defs/blocked_external_readiness"}
+      ]
+    },
+    "data_ready": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "required_data_objects_resolved", "unresolved_data_objects", "notes"],
+      "properties": {
+        "status": {
+          "const": "DATA_READY"
+        },
+        "required_data_objects_resolved": {
+          "const": "yes"
+        },
+        "unresolved_data_objects": {"type": "array", "maxItems": 0},
+        "notes": {
+          "oneOf": [
+            {"$ref": "#/$defs/nonempty_string"},
+            {"$ref": "#/$defs/string_list"}
+          ]
+        }
+      }
+    },
+    "blocked_external_readiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "required_data_objects_resolved", "unresolved_data_objects", "notes"],
+      "properties": {
+        "status": {"const": "BLOCKED_EXTERNAL"},
+        "required_data_objects_resolved": {"const": "no"},
+        "unresolved_data_objects": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^A[0-9]{2,}$"}
+        },
+        "notes": {
+          "oneOf": [
+            {"$ref": "#/$defs/nonempty_string"},
+            {"$ref": "#/$defs/string_list"}
+          ]
+        }
+      }
+    },
+    "schema_check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["scientific_chain_schema", "execution_subchain_schema", "jsonl_extension_policy"],
+      "properties": {
+        "scientific_chain_schema": {"const": "contracts/output_template/scientific_chain.jsonl"},
+        "execution_subchain_schema": {"const": "contracts/output_template/execution_subchains.jsonl"},
+        "jsonl_extension_policy": {"const": "no_extra_fields"}
+      }
+    },
+    "visibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["agent_visible", "evaluator_facing", "hidden_reference_candidate"],
+      "properties": {
+        "agent_visible": {"enum": ["no", false]},
+        "evaluator_facing": {"enum": ["yes", true]},
+        "hidden_reference_candidate": {"enum": ["yes", true]}
+      }
+    },
+    "extraction_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["construction_mode", "execution_route", "result_material", "scientific_unit_requirement", "execution_granularity", "minimum_execution_detail"],
+      "properties": {
+        "construction_mode": {"const": "hvu_execution_alternating"},
+        "execution_route": {"const": "ordered_multi_step_method_call_route"},
+        "result_material": {
+          "type": "string",
+          "enum": [
+            "concrete_numeric_or_biological_analysis_content",
+            "concrete_biological_analysis_content"
+          ]
+        },
+        "scientific_unit_requirement": {"$ref": "#/$defs/nonempty_string"},
+        "execution_granularity": {
+          "type": "string",
+          "enum": ["source_analysis_granularity", "concrete_execution_granularity"]
+        },
+        "minimum_execution_detail": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/nonempty_string"}
+        }
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["source_sections", "source_notebooks_or_scripts", "source_figures_or_tables"],
+      "properties": {
+        "source_sections": {"$ref": "#/$defs/string_list"},
+        "source_notebooks_or_scripts": {"$ref": "#/$defs/string_list"},
+        "source_figures_or_tables": {"$ref": "#/$defs/string_list"}
+      }
+    }
+  }
+}

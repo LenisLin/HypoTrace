@@ -7,16 +7,14 @@ unimplemented validators, adapters, metrics, or reports already exist.
 
 Deliverables:
 
-- Repository structure for docs, schemas, skills, templates, examples, and tests.
+- Repository structure for docs, schemas, skills, templates, and tests.
 - Shared `contracts/HYPO_TRACE_SKILL.md`.
 - Shared `contracts/output_template/`.
-- Toy smoke fixtures for schema and dry-run checks.
 
 Acceptance checks:
 
 - Repository structure is Git-trackable.
 - Shared output skill and template are visible to all conditions.
-- Dry-run creates the required submission tree.
 
 ## Phase 1: Schema Models And Validator
 
@@ -35,8 +33,7 @@ Acceptance checks:
 - Strict validation is used for primary scoring.
 - Salvage parsing is limited to diagnostics.
 - Validators do not modify submissions.
-- Registry validation distinguishes Git task registry entries from smoke
-  fixtures.
+- Registry validation binds Git task registry entries to canonical NAS bundles.
 - Current `contracts/schemas/` files are placeholders until this phase
   implements strict validation.
 
@@ -121,6 +118,7 @@ Deliverables:
 
 Acceptance checks:
 
-- Reports separate objective metrics from companion ranking.
+- Reports distinguish objective integrity diagnostics from anonymous
+  human-relative ranking.
 - Annotation packets hide condition identity where required.
 - Expert or LLM ranking inputs are reproducible and auditable.

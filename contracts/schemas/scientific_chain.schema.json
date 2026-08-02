@@ -2,26 +2,147 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "HypoTrace Scientific Chain Record",
   "type": "object",
-  "required": [
-    "scientific_unit_id",
-    "unit_type",
-    "question_or_hypothesis",
-    "evidence_need",
-    "method_intent",
-    "execution_subchain_ids",
-    "result",
-    "conclusion"
+  "oneOf": [
+    {
+      "title": "Study Framing Record",
+      "type": "object",
+      "required": [
+        "scientific_unit_id",
+        "parent_units",
+        "data_summary"
+      ],
+      "properties": {
+        "scientific_unit_id": {"const": "S00"},
+        "parent_units": {
+          "type": "array",
+          "maxItems": 0
+        },
+        "data_summary": {
+          "type": "object",
+          "required": [
+            "organism",
+            "tissue",
+            "data_types",
+            "sample_count",
+            "spatial_unit_count",
+            "sample_structure",
+            "grouping_variables",
+            "metadata_available",
+            "notes"
+          ],
+          "properties": {
+            "organism": {"type": ["string", "null"], "minLength": 1},
+            "tissue": {"type": ["string", "null"], "minLength": 1},
+            "data_types": {
+              "type": "array",
+              "items": {"type": "string", "minLength": 1},
+              "uniqueItems": true
+            },
+            "sample_count": {"type": ["integer", "null"], "minimum": 0},
+            "spatial_unit_count": {"type": ["integer", "null"], "minimum": 0},
+            "sample_structure": {
+              "type": "array",
+              "items": {"type": "string", "minLength": 1},
+              "uniqueItems": true
+            },
+            "grouping_variables": {
+              "type": "array",
+              "items": {"type": "string", "minLength": 1},
+              "uniqueItems": true
+            },
+            "metadata_available": {
+              "type": "array",
+              "items": {"type": "string", "minLength": 1},
+              "uniqueItems": true
+            },
+            "notes": {
+              "type": "array",
+              "items": {"type": "string", "minLength": 1}
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    {
+      "title": "Hypothesis Verification Record",
+      "type": "object",
+      "required": [
+        "scientific_unit_id",
+        "parent_units",
+        "hypothesis",
+        "experiment",
+        "result",
+        "conclusion",
+        "next_hypothesis"
+      ],
+      "properties": {
+        "scientific_unit_id": {
+          "type": "string",
+          "pattern": "^S(0[1-9]|[1-9][0-9]+)$"
+        },
+        "parent_units": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^S(0[1-9]|[1-9][0-9]+)$"
+          },
+          "uniqueItems": true
+        },
+        "hypothesis": {"type": "string", "minLength": 1},
+        "experiment": {
+          "type": "object",
+          "required": ["summary", "execution_subchain_ids"],
+          "properties": {
+            "summary": {"type": "string", "minLength": 1},
+            "execution_subchain_ids": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "string",
+                "pattern": "^E(0[1-9]|[1-9][0-9]+)$"
+              },
+              "uniqueItems": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "result": {
+          "type": "object",
+          "required": ["observations"],
+          "properties": {
+            "observations": {
+              "type": "array",
+              "minItems": 1,
+              "items": {"$ref": "#/$defs/observation"}
+            }
+          },
+          "additionalProperties": false
+        },
+        "conclusion": {
+          "type": "object",
+          "required": ["summary"],
+          "properties": {
+            "summary": {"type": "string", "minLength": 1}
+          },
+          "additionalProperties": false
+        },
+        "next_hypothesis": {"type": ["string", "null"], "minLength": 1}
+      },
+      "additionalProperties": false
+    }
   ],
-  "properties": {
-    "scientific_unit_id": {"type": "string"},
-    "unit_type": {"type": "string"},
-    "parent_units": {"type": "array", "items": {"type": "string"}},
-    "question_or_hypothesis": {"type": "string"},
-    "evidence_need": {"type": "array"},
-    "method_intent": {"type": "array"},
-    "execution_subchain_ids": {"type": "array", "items": {"type": "string"}},
-    "result": {"type": "object"},
-    "conclusion": {"type": "object"},
-    "next_question": {"type": ["string", "null"]}
+  "$defs": {
+    "observation": {
+      "type": "object",
+      "required": ["observation", "support", "interpretation"],
+      "properties": {
+        "observation": {"type": "string", "minLength": 1},
+        "support": {"type": "string", "minLength": 1},
+        "interpretation": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    }
   }
 }
