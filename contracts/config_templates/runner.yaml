@@ -1,4 +1,4 @@
-runner: dry_run
+runner: null
 data_root: /mnt/NAS_21T/ProjectData/HypoTrace_Data
 container:
   enabled: false

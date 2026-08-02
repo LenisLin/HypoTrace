@@ -17,9 +17,6 @@ dev = [
     "jsonschema>=4",
 ]
 
-[project.scripts]
-hypotrace = "hypotrace.cli:main"
-
 [tool.setuptools.packages.find]
 include = ["hypotrace*"]
 

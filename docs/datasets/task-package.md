@@ -36,9 +36,7 @@ and curation-only material must not be copied into the agent workspace.
 Publication-derived chains are evaluator-only anchors; they are not unique truth
 trajectories and should not force agents to reproduce a paper's exact path.
 
-The current `examples/toy_task` layout remains a smoke fixture for loader and
-CLI compatibility. Registry loading and NAS bundle resolution are later
-implementation steps.
+Registry loading and NAS bundle resolution remain future implementation steps.
 
 ## `task_manifest.yaml`
 

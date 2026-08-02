@@ -40,11 +40,6 @@ support, evaluator-only references, and curation material according to
 visibility. Reference chains and truth files must not be stored in Git task
 registry entries.
 
-The current `examples/toy_task` directory is a smoke fixture for loader and CLI
-compatibility. It is not the target storage pattern for real task authoring.
-The current `validate-task` command validates only this smoke fixture shape until
-a registry loader is explicitly designed.
-
 Optional files:
 
 - `starter_workspace/`: non-answer starting files exposed to the agent, stored

@@ -22,6 +22,3 @@ The complete task bundle lives under:
 Hidden references, truth files, reference outputs, raw data, prepared data,
 trajectories, submissions, and run outputs must not be stored in this Git
 repository.
-
-`examples/toy_task` is a smoke fixture for current loader and CLI checks. It is
-not the target storage pattern for real benchmark tasks.
