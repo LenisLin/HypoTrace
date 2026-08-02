@@ -62,7 +62,7 @@ article-anchored scope and public-access boundary.
 
 | Source | Link | Current status | Notes |
 |---|---|---|---|
-| STOmicsDB / STDS | [canonical public-data route](public-data-research-case-extraction.md) | selected for active Round-1 intake | Screen article-anchored, anonymously public cases through the canonical route. |
+| STOmicsDB / STDS | [canonical public-data route](public-data-research-case-extraction.md) | frozen 16-study scope | Use only the ordered STDS allowlist in the canonical public-data route for localization, dispatch, case construction, and downstream extraction. |
 | 10x Genomics official datasets | https://www.10xgenomics.com/datasets | deferred from active Round-1 intake | Retain as a future data-access route; do not add cases to the current intake. |
 | CROST | not yet selected | deferred from active Round-1 intake | Retain for later source assessment; do not add cases to the current intake. |
 | CRC CMS ST paper | https://doi.org/10.1038/s41698-023-00488-4 | high-priority candidate | Data/code available via Zenodo and GitHub; discuss after benchmark and tool-paper routes. |
